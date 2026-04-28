@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: euchre-online
+    env: node
+    plan: starter          # starter plan required for persistent disk
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    # Persistent disk keeps game.db (PHD Solution Game scores) across deploys/restarts
+    disk:
+      name: game-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # PHD Solution Game — AI feedback via Claude
+      - key: ANTHROPIC_API_KEY
+        sync: false          # set the value in the Render dashboard (never commit secrets)
+      # Path for the SQLite database on the persistent disk
+      - key: DB_PATH
+        value: /data/game.db
+      # Optional: add TURN server credentials for players behind strict NAT firewalls
+      # - key: TURN_URL
+      #   value: turn:your-turn-server.com:3478
+      # - key: TURN_USERNAME
+      #   value: your-username
+      # - key: TURN_CREDENTIAL
+      #   value: your-credential
