@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Gripper body -->
+  <rect x="35" y="30" width="50" height="35" rx="5" fill="#374151" stroke="#6B7280" stroke-width="1.5"/>
+  <!-- Left jaw (open angular) -->
+  <path d="M35 52 L15 38 L10 42 L30 58 Z" fill="#1D4ED8" stroke="#3B82F6" stroke-width="1"/>
+  <!-- Right jaw (open angular) -->
+  <path d="M85 52 L105 38 L110 42 L90 58 Z" fill="#1D4ED8" stroke="#3B82F6" stroke-width="1"/>
+  <!-- Jaw pads / tips -->
+  <rect x="8" y="40" width="8" height="5" rx="1" fill="#93C5FD"/>
+  <rect x="104" y="40" width="8" height="5" rx="1" fill="#93C5FD"/>
+  <!-- Steel panel being gripped (phantom) -->
+  <rect x="42" y="65" width="36" height="5" rx="1" fill="#9CA3AF" opacity="0.5" stroke="#6B7280" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- Gripper body highlight -->
+  <rect x="35" y="30" width="50" height="12" rx="5" fill="#4B5563" opacity="0.5"/>
+  <!-- Mounting flange -->
+  <rect x="45" y="20" width="30" height="12" rx="2" fill="#1E293B" stroke="#374151" stroke-width="1"/>
+  <circle cx="52" cy="26" r="3" fill="#374151"/>
+  <circle cx="68" cy="26" r="3" fill="#374151"/>
+  <!-- Port -->
+  <circle cx="50" cy="67" r="3" fill="#334155"/>
+  <circle cx="70" cy="67" r="3" fill="#334155"/>
+  <!-- Label -->
+  <text x="60" y="90" font-family="Arial" font-size="6.5" fill="#9CA3AF" text-anchor="middle">PHD Series EA/EL/EH</text>
+  <text x="60" y="100" font-family="Arial" font-size="6" fill="#6B7280" text-anchor="middle">Heavy-Duty Parallel Gripper</text>
+</svg>
