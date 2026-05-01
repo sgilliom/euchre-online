@@ -146,6 +146,20 @@ input:focus{border-color:var(--gold)}
 .ovbtns{display:flex;flex-direction:column;gap:9px}
 #toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.88);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:9px 18px;font-size:.88rem;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
 #toast.show{opacity:1}
+/* Video bar */
+.vbar{background:rgba(0,0,0,.7);padding:5px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.vbar-tile{position:relative;width:72px;height:54px;background:#111;border-radius:6px;overflow:hidden;flex-shrink:0}
+.vbar-tile video{width:100%;height:100%;object-fit:cover}
+.vbar-name{position:absolute;bottom:2px;left:3px;font-size:.58rem;color:#fff;background:rgba(0,0,0,.65);border-radius:2px;padding:1px 4px;white-space:nowrap;overflow:hidden;max-width:66px;text-overflow:ellipsis}
+.vbar-muted{position:absolute;top:2px;right:2px;font-size:.6rem;background:rgba(239,68,68,.8);border-radius:50%;width:14px;height:14px;display:none;align-items:center;justify-content:center}
+.vbar-muted.show{display:flex}
+.vbar-ctrls{display:flex;gap:6px;margin-left:auto}
+.vbar-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;font-size:.78rem;white-space:nowrap;transition:all .15s}
+.vbar-btn:hover{background:rgba(255,255,255,.14)}
+.vbar-btn.off{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.45);color:#fca5a5}
+.vbar-btn.on{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.45);color:#86efac}
+/* Build stamp */
+#buildstamp{position:fixed;bottom:8px;left:10px;font-size:.65rem;color:rgba(255,255,255,.25);pointer-events:none;z-index:10}
 @media(max-width:700px){.side{display:none}.table{grid-template-columns:90px 1fr 90px;grid-template-rows:85px 1fr 125px}}
 </style>
 </head>
@@ -163,7 +177,6 @@ input:focus{border-color:var(--gold)}
   <button class="btn btn-gold" onclick="joinRoom()">Join Game</button>
   <div class="divider">or</div>
   <button class="btn btn-sec" onclick="document.getElementById('lroom').value=randCode()">Generate Room Code</button>
-  <div class="nav"><a href="/phd-game">PHD Game</a><a href="/phd-simulator">PHD Simulator</a></div>
 </div>
 </div>
 
@@ -190,6 +203,18 @@ input:focus{border-color:var(--gold)}
 <!-- GAME -->
 <div id="game" class="screen">
 <div class="gmain">
+  <!-- Video bar -->
+  <div class="vbar" id="vbar">
+    <div class="vbar-tile"><video id="v0" autoplay muted playsinline></video><div class="vbar-name" id="vn0">You</div></div>
+    <div class="vbar-tile"><video id="v1" autoplay playsinline></video><div class="vbar-name" id="vn1"></div></div>
+    <div class="vbar-tile"><video id="v2" autoplay playsinline></video><div class="vbar-name" id="vn2"></div></div>
+    <div class="vbar-tile"><video id="v3" autoplay playsinline></video><div class="vbar-name" id="vn3"></div></div>
+    <div class="vbar-ctrls">
+      <button class="vbar-btn" id="vbtn-connect" onclick="startVideo()">📷 Enable Camera</button>
+      <button class="vbar-btn" id="vbtn-mute" onclick="toggleMute()" style="display:none">🎤 Mute</button>
+      <button class="vbar-btn" id="vbtn-cam" onclick="toggleCam()" style="display:none">📷 Hide Cam</button>
+    </div>
+  </div>
   <div class="scorebar">
     <span id="t0name" style="color:#93c5fd">Team 1</span>
     <span class="score-badge s0" id="sc0">0</span>
@@ -242,8 +267,7 @@ input:focus{border-color:var(--gold)}
 </div>
 <div class="side">
   <div class="tabs">
-    <div class="tab on" onclick="switchTab('chat')">Chat</div>
-    <div class="tab" onclick="switchTab('video')">Video</div>
+    <div class="tab on">Chat</div>
   </div>
   <div class="pcontent">
     <div class="pane on" id="pchat">
@@ -251,19 +275,6 @@ input:focus{border-color:var(--gold)}
       <div class="cinput-row">
         <input class="cinput" id="ci" placeholder="Say something..." maxlength="300" onkeydown="if(event.key==='Enter')sendChat()">
         <button class="csend" onclick="sendChat()">➤</button>
-      </div>
-    </div>
-    <div class="pane" id="pvideo">
-      <div class="vgrid">
-        <div class="vslot"><video id="v0" autoplay muted playsinline></video><div class="vname" id="vn0">You</div></div>
-        <div class="vslot"><video id="v1" autoplay playsinline></video><div class="vname" id="vn1">—</div></div>
-        <div class="vslot"><video id="v2" autoplay playsinline></video><div class="vname" id="vn2">—</div></div>
-        <div class="vslot"><video id="v3" autoplay playsinline></video><div class="vname" id="vn3">—</div></div>
-      </div>
-      <div class="vctrls">
-        <button class="vbtn" id="vmute" onclick="toggleMute()">🎤 Mute</button>
-        <button class="vbtn" id="vcam" onclick="toggleCam()">📷 Cam</button>
-        <button class="vbtn" onclick="startVideo()">📡 Connect</button>
       </div>
     </div>
   </div>
@@ -294,6 +305,7 @@ input:focus{border-color:var(--gold)}
 </div>
 </div>
 <div id="toast"></div>
+<div id="buildstamp"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -526,21 +538,43 @@ async function startVideo(){
     localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
     document.getElementById('v0').srcObject=localStream;
     if(!rtcCfg){const r=await fetch('/api/rtc-config');rtcCfg=await r.json()}
-    toast('Camera connected!');
+    // Show mute/cam buttons, hide connect button
+    document.getElementById('vbtn-connect').style.display='none';
+    document.getElementById('vbtn-mute').style.display='';
+    document.getElementById('vbtn-cam').style.display='';
+    toast('Camera & mic connected!');
+    // Call any already-joined peers
+    if(RS)RS.players.filter(p=>!p.isBot&&p.id!==sock.id).forEach(p=>initiateCall(p.id));
   }catch(e){toast('Camera error: '+e.message)}
+}
+async function initiateCall(peerId){
+  if(!localStream||!rtcCfg)return;
+  const pc=mkPeer(peerId);
+  localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+  const offer=await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  sock.emit('webrtc_offer',{targetId:peerId,offer});
 }
 function mkPeer(id){
   if(peers[id])peers[id].close();
   const pc=new RTCPeerConnection(rtcCfg||{iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
   peers[id]=pc;
   pc.onicecandidate=e=>{if(e.candidate)sock.emit('webrtc_ice',{targetId:id,candidate:e.candidate})};
+  let slotIdx=1;
   pc.ontrack=e=>{
-    const vids=['v1','v2','v3'];
-    for(const vid of vids){const el=document.getElementById(vid);if(!el.srcObject){el.srcObject=e.streams[0];break}}
+    // Find a free slot or reuse assigned slot for this peer
+    if(!peers[id]._slot){
+      for(let i=1;i<=3;i++){const el=document.getElementById('v'+i);if(!el.srcObject){peers[id]._slot=i;break}}
+    }
+    const slot=peers[id]._slot||1;
+    document.getElementById('v'+slot).srcObject=e.streams[0];
+    // Label it with the player's name if we know it
+    if(RS){const pl=RS.players.find(p=>p.id===id);if(pl)document.getElementById('vn'+slot).textContent=pl.name}
   };
   return pc;
 }
 async function handleOffer(fromId,offer){
+  if(!rtcCfg){const r=await fetch('/api/rtc-config');rtcCfg=await r.json()}
   const pc=mkPeer(fromId);
   if(localStream)localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
   await pc.setRemoteDescription(offer);
@@ -548,8 +582,30 @@ async function handleOffer(fromId,offer){
   await pc.setLocalDescription(ans);
   sock.emit('webrtc_answer',{targetId:fromId,answer:ans});
 }
-function toggleMute(){muted=!muted;if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!muted);document.getElementById('vmute').classList.toggle('off',muted);document.getElementById('vmute').textContent=muted?'🔇 Unmute':'🎤 Mute';if(sock)sock.emit('media_state',{muted,videoOff:camOff})}
-function toggleCam(){camOff=!camOff;if(localStream)localStream.getVideoTracks().forEach(t=>t.enabled=!camOff);document.getElementById('vcam').classList.toggle('off',camOff);document.getElementById('vcam').textContent=camOff?'📷 Show':'📷 Cam';if(sock)sock.emit('media_state',{muted,videoOff:camOff})}
+function toggleMute(){
+  muted=!muted;
+  if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!muted);
+  const b=document.getElementById('vbtn-mute');
+  b.textContent=muted?'🔇 Unmute':'🎤 Mute';
+  b.classList.toggle('off',muted);
+  if(sock)sock.emit('media_state',{muted,videoOff:camOff});
+}
+function toggleCam(){
+  camOff=!camOff;
+  if(localStream)localStream.getVideoTracks().forEach(t=>t.enabled=!camOff);
+  const b=document.getElementById('vbtn-cam');
+  b.textContent=camOff?'📷 Show Cam':'📷 Hide Cam';
+  b.classList.toggle('off',camOff);
+  if(sock)sock.emit('media_state',{muted,videoOff:camOff});
+}
+/* Build stamp */
+fetch('/api/version').then(r=>r.json()).then(d=>{
+  const el=document.getElementById('buildstamp');
+  if(el&&d.buildTime){
+    const dt=new Date(d.buildTime);
+    el.textContent='Build: '+dt.toLocaleDateString()+' '+dt.toLocaleTimeString();
+  }
+}).catch(()=>{});
 </script>
 </body>
 </html>
