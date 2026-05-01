@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHD Solution Game</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#ffd700;--blue:#1e3a5f;--green:#22c55e;--red:#ef4444}
+body{background:#0a0f1a;color:#f0f0f0;font-family:system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.screen{display:none;width:100%;max-width:680px;flex-direction:column;gap:20px}
+.screen.active{display:flex}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:28px}
+h1{font-size:1.8rem;color:var(--gold);text-align:center;margin-bottom:6px}
+.sub{text-align:center;color:rgba(255,255,255,.45);font-size:.88rem;margin-bottom:22px}
+label{display:block;font-size:.74rem;color:rgba(255,255,255,.48);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+input{width:100%;padding:11px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#fff;font-size:.95rem;outline:none;margin-bottom:14px}
+input:focus{border-color:var(--gold)}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-gold{background:var(--gold);color:#1a1a1a}.btn-gold:hover{background:#ffe44d}
+.btn-sec{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.16)}.btn-sec:hover{background:rgba(255,255,255,.14)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#16a34a}
+a.back{display:inline-block;color:rgba(255,255,255,.4);font-size:.82rem;text-decoration:none;margin-bottom:8px}.a.back:hover{color:var(--gold)}
+
+/* Progress */
+.progress-bar{background:rgba(255,255,255,.08);border-radius:20px;height:6px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;background:var(--gold);border-radius:20px;transition:width .4s}
+.qmeta{display:flex;justify-content:space-between;font-size:.78rem;color:rgba(255,255,255,.4);margin-bottom:18px}
+.diff-badge{padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:600;text-transform:uppercase}
+.diff-easy{background:rgba(34,197,94,.18);color:#86efac}
+.diff-medium{background:rgba(251,191,36,.18);color:#fde68a}
+.diff-hard{background:rgba(239,68,68,.18);color:#fca5a5}
+
+/* Question */
+.qimg{width:100%;height:140px;background:rgba(255,255,255,.04);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;overflow:hidden}
+.qimg img{max-height:120px;max-width:100%;object-fit:contain}
+.qscenario{font-size:.95rem;line-height:1.6;color:rgba(255,255,255,.88);margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{padding:13px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;cursor:pointer;font-size:.88rem;line-height:1.4;transition:all .15s;text-align:left}
+.choice:hover:not(.disabled){background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.35)}
+.choice.correct{background:rgba(34,197,94,.14);border-color:#22c55e;color:#86efac}
+.choice.wrong{background:rgba(239,68,68,.12);border-color:#ef4444;color:#fca5a5}
+.choice.disabled{cursor:default}
+.choice-label{font-weight:700;color:var(--gold);margin-right:7px}
+
+/* Feedback */
+.feedback{margin-top:18px;padding:16px;border-radius:10px;font-size:.88rem;line-height:1.6;display:none}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#bbf7d0}
+.feedback.wrong{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fecaca}
+.ai-label{font-size:.72rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.score-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07);margin-top:10px}
+.pts-earned{font-size:1.1rem;font-weight:bold;color:var(--gold)}
+
+/* Results */
+.big-score{font-size:3.5rem;font-weight:bold;color:var(--gold);text-align:center;margin:10px 0}
+.pct{font-size:1rem;color:rgba(255,255,255,.5);text-align:center;margin-bottom:6px}
+.rank{font-size:.95rem;color:rgba(255,255,255,.65);text-align:center;margin-bottom:20px}
+.stat-row{display:flex;justify-content:space-around;margin-bottom:18px}
+.stat{text-align:center}.stat-val{font-size:1.4rem;font-weight:bold;color:var(--gold)}.stat-lbl{font-size:.74rem;color:rgba(255,255,255,.4)}
+
+/* Leaderboard */
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-size:.72rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+.lb-table td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem}
+.lb-table tr:first-child td{color:var(--gold)}
+.rank-num{color:rgba(255,255,255,.35);width:30px}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+  <div class="card">
+    <h1>🏭 PHD Solution Game</h1>
+    <p class="sub">Test your automation knowledge. Match the right PHD product to each real-world scenario.</p>
+    <label>Your Name</label>
+    <input id="pname" placeholder="Enter your name" maxlength="40">
+    <label>Email (tracks your score)</label>
+    <input id="pemail" placeholder="Enter your email" type="email">
+    <button class="btn btn-gold" onclick="startGame()">Start Game</button>
+    <div style="margin-top:12px">
+      <button class="btn btn-sec" onclick="showLeaderboard()">View Leaderboard</button>
+    </div>
+    <div style="text-align:center;margin-top:16px"><a href="/" style="color:rgba(255,255,255,.38);font-size:.8rem;text-decoration:none">← Back to Euchre</a></div>
+    <div id="intro-err" style="color:#f87171;font-size:.82rem;margin-top:10px;display:none"></div>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div id="qscreen" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:.8rem;color:rgba(255,255,255,.35)">PHD Solution Game</span>
+    <span id="q-score-top" style="font-size:.85rem;color:var(--gold);font-weight:bold">0 pts</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+  <div class="qmeta">
+    <span id="qnum">Question 1 of 3</span>
+    <span class="diff-badge" id="qdiff"></span>
+    <span id="qpts"></span>
+  </div>
+  <div class="card">
+    <div class="qimg"><img id="qimg" src="" alt=""></div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px" id="qcat"></div>
+    <div style="font-size:1rem;font-weight:600;margin-bottom:10px" id="qtitle"></div>
+    <div class="qscenario" id="qscenario"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback">
+      <div class="ai-label">Explanation</div>
+      <div id="fb-text"></div>
+      <div class="score-row">
+        <span class="pts-earned" id="pts-earned"></span>
+        <span style="color:rgba(255,255,255,.45);font-size:.82rem" id="pts-label"></span>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:none" id="nextbtn">
+      <button class="btn btn-gold" onclick="nextQ()">Next Question →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <div class="card">
+    <h1>Game Complete!</h1>
+    <div class="big-score" id="res-score">0</div>
+    <div class="pct" id="res-pct"></div>
+    <div class="rank" id="res-rank"></div>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-val" id="res-correct">0</div><div class="stat-lbl">Correct</div></div>
+      <div class="stat"><div class="stat-val" id="res-total">0</div><div class="stat-lbl">Questions</div></div>
+      <div class="stat"><div class="stat-val" id="res-max">0</div><div class="stat-lbl">Max Pts</div></div>
+    </div>
+    <button class="btn btn-gold" style="margin-bottom:10px" onclick="showLeaderboard()">View Leaderboard</button>
+    <button class="btn btn-sec" onclick="location.reload()">Play Again</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="lbscreen" class="screen">
+  <div class="card">
+    <h1>🏆 Leaderboard</h1>
+    <div style="overflow-x:auto;margin-top:16px">
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>Name</th><th>Best Score</th><th>%</th><th>Games</th></tr></thead>
+        <tbody id="lbtbody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:10px">
+      <button class="btn btn-sec" onclick="show('intro')">Play Game</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let sessionId=null,questions=[],qIdx=0,runScore=0,userName='';
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function err(msg){const e=document.getElementById('intro-err');e.textContent=msg;e.style.display='block'}
+
+async function startGame(){
+  const name=document.getElementById('pname').value.trim();
+  const email=document.getElementById('pemail').value.trim();
+  if(!name){err('Please enter your name');return}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err('Please enter a valid email');return}
+  userName=name;
+  try{
+    const r=await fetch('/api/game/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email})});
+    const d=await r.json();
+    if(!r.ok){err(d.error||'Failed to start');return}
+    sessionId=d.sessionId;questions=d.questions;qIdx=0;runScore=0;
+    showQ();
+    show('qscreen');
+  }catch(e){err('Network error — please try again')}
+}
+
+function showQ(){
+  const q=questions[qIdx];
+  document.getElementById('prog').style.width=`${(qIdx/questions.length)*100}%`;
+  document.getElementById('qnum').textContent=`Question ${qIdx+1} of ${questions.length}`;
+  const db=document.getElementById('qdiff');db.textContent=q.difficulty;db.className=`diff-badge diff-${q.difficulty}`;
+  document.getElementById('qpts').textContent=`${q.points} pts`;
+  document.getElementById('q-score-top').textContent=`${runScore} pts`;
+  document.getElementById('qcat').textContent=q.category;
+  document.getElementById('qtitle').textContent=q.title;
+  document.getElementById('qscenario').textContent=q.scenario;
+  const img=document.getElementById('qimg');img.src=q.image||'';img.alt=q.title;
+  const fb=document.getElementById('feedback');fb.className='feedback';fb.style.display='none';
+  document.getElementById('nextbtn').style.display='none';
+  const ch=document.getElementById('choices');ch.innerHTML='';
+  q.choices.forEach(c=>{
+    const d=document.createElement('div');d.className='choice';
+    d.innerHTML=`<span class="choice-label">${c.id}.</span>${c.text}`;
+    d.addEventListener('click',()=>answer(c.id,d));
+    ch.appendChild(d);
+  });
+}
+
+async function answer(choice,el){
+  const q=questions[qIdx];
+  document.querySelectorAll('.choice').forEach(c=>c.classList.add('disabled'));
+  try{
+    const r=await fetch('/api/game/answer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,questionId:q.id,selectedChoice:choice})});
+    const d=await r.json();
+    // Highlight choices
+    document.querySelectorAll('.choice').forEach(c=>{
+      const lbl=c.querySelector('.choice-label').textContent.replace('.','');
+      if(lbl===d.correctChoice)c.classList.add('correct');
+      else if(lbl===choice&&!d.isCorrect)c.classList.add('wrong');
+    });
+    // Feedback
+    const fb=document.getElementById('feedback');
+    fb.className='feedback show '+(d.isCorrect?'correct':'wrong');
+    document.getElementById('fb-text').textContent=d.aiFeedback||'';
+    document.getElementById('pts-earned').textContent=d.isCorrect?`+${d.scoreEarned} pts`:'0 pts';
+    document.getElementById('pts-label').textContent=d.isCorrect?'Correct!':'Incorrect';
+    runScore+=d.scoreEarned;
+    document.getElementById('q-score-top').textContent=`${runScore} pts`;
+    document.getElementById('nextbtn').style.display='block';
+  }catch(e){console.error(e)}
+}
+
+async function nextQ(){
+  qIdx++;
+  if(qIdx<questions.length){showQ();return}
+  // Complete
+  try{
+    const r=await fetch('/api/game/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId})});
+    const d=await r.json();
+    document.getElementById('prog').style.width='100%';
+    document.getElementById('res-score').textContent=d.score;
+    document.getElementById('res-pct').textContent=`${d.percentage}% — ${d.score} of ${d.maxPossible} points`;
+    document.getElementById('res-rank').textContent=`Your Rank: #${d.yourRank}${d.isNewBest?' 🎉 New Personal Best!':''}`;
+    document.getElementById('res-correct').textContent=d.correctAnswers;
+    document.getElementById('res-total').textContent=d.questionsAnswered;
+    document.getElementById('res-max').textContent=d.maxPossible;
+    show('results');
+  }catch(e){show('results')}
+}
+
+async function showLeaderboard(){
+  try{
+    const r=await fetch('/api/game/leaderboard');
+    const d=await r.json();
+    const tbody=document.getElementById('lbtbody');tbody.innerHTML='';
+    d.leaderboard.forEach((row,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="rank-num">${i+1}</td><td>${row.name}</td><td>${row.best_score}</td><td>${row.percentage||0}%</td><td>${row.games_played}</td>`;
+      tbody.appendChild(tr);
+    });
+    if(!d.leaderboard.length){const tr=document.createElement('tr');tr.innerHTML='<td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:20px">No scores yet — be the first!</td>';tbody.appendChild(tr)}
+    show('lbscreen');
+  }catch(e){console.error(e)}
+}
+</script>
+</body>
+</html>
