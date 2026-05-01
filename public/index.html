@@ -160,6 +160,38 @@ input:focus{border-color:var(--gold)}
 .vbar-btn.on{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.45);color:#86efac}
 /* Build stamp */
 #buildstamp{position:fixed;bottom:8px;left:10px;font-size:.65rem;color:rgba(255,255,255,.25);pointer-events:none;z-index:10}
+/* Waiting room — shareable link */
+.wroom-share{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.22);border-radius:8px;padding:10px 14px;margin-bottom:12px}
+.wroom-share .share-lbl{font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:5px}
+.share-link-row{display:flex;align-items:center;gap:8px}
+.share-url{font-size:.76rem;color:rgba(255,215,0,.8);flex:1;word-break:break-all}
+.copy-btn{padding:4px 10px;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);border-radius:5px;color:var(--gold);cursor:pointer;font-size:.73rem;white-space:nowrap;transition:background .15s}
+.copy-btn:hover{background:rgba(255,215,0,.22)}
+/* Waiting room — team layout */
+.wroom-status{font-size:.84rem;color:rgba(255,255,255,.52);text-align:center;margin-bottom:12px}
+.teams-row{display:flex;gap:10px;margin-bottom:14px}
+.team-col{flex:1;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,.1)}
+.team-col.t1{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.2)}
+.team-col.t2{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.2)}
+.team-hdr{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600}
+.team-hdr.t1c{color:#93c5fd}.team-hdr.t2c{color:#fca5a5}
+.team-player{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;margin-bottom:5px;font-size:.84rem;min-height:34px}
+.team-player.taken{background:rgba(255,255,255,.06)}
+.team-player.me{background:rgba(255,215,0,.09);border:1px solid rgba(255,215,0,.25)}
+.team-player.empty{color:rgba(255,255,255,.28);font-style:italic;border:1px dashed rgba(255,255,255,.1)}
+.you-badge{font-size:.68rem;color:var(--gold);margin-left:5px}
+.swap-btn{padding:3px 8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:5px;cursor:pointer;font-size:.7rem;color:rgba(255,255,255,.65);white-space:nowrap;transition:all .15s}
+.swap-btn:hover{background:rgba(255,255,255,.14)}
+/* Waiting room — camera preview */
+.wroom-cam{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;margin-bottom:14px}
+.wroom-cam-hdr{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.wroom-cam-row{display:flex;align-items:center;gap:10px}
+.wroom-vid{width:80px;height:60px;background:#0e0e0e;border-radius:6px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.08)}
+.wroom-vid video{width:100%;height:100%;object-fit:cover}
+.wroom-cam-btns{display:flex;flex-direction:column;gap:6px;flex:1}
+.wcbtn{padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;font-size:.78rem;transition:all .15s;text-align:left}
+.wcbtn:hover{background:rgba(255,255,255,.13)}
+.wcbtn.off{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#fca5a5}
 @media(max-width:700px){.side{display:none}.table{grid-template-columns:90px 1fr 90px;grid-template-rows:85px 1fr 125px}}
 </style>
 </head>
@@ -182,17 +214,54 @@ input:focus{border-color:var(--gold)}
 
 <!-- WAITING -->
 <div id="waiting" class="screen">
-<div class="box" style="width:460px">
-  <h2 style="text-align:center;color:var(--gold);margin-bottom:18px">Waiting Room</h2>
-  <div class="room-code"><div class="lbl">Share this code with friends</div><div class="code" id="wcode">----</div></div>
-  <div style="font-size:.72rem;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">Players</div>
-  <div class="seat-grid" id="seats"></div>
+<div class="box" style="width:480px">
+  <h2 style="text-align:center;color:var(--gold);margin-bottom:16px">Waiting Room</h2>
+
+  <!-- Shareable link -->
+  <div class="wroom-share">
+    <div class="share-lbl">Share this link with friends</div>
+    <div class="share-link-row">
+      <div class="share-url" id="wshareurl"></div>
+      <button class="copy-btn" id="wcopybtn" onclick="copyLink()">Copy</button>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="wroom-status" id="wstatus">Waiting for players...</div>
+
+  <!-- Team columns -->
+  <div class="teams-row">
+    <div class="team-col t1">
+      <div class="team-hdr t1c">Team 1</div>
+      <div id="team0"></div>
+    </div>
+    <div class="team-col t2">
+      <div class="team-hdr t2c">Team 2</div>
+      <div id="team1"></div>
+    </div>
+  </div>
+
+  <!-- Camera preview -->
+  <div class="wroom-cam">
+    <div class="wroom-cam-hdr">Camera &amp; Microphone</div>
+    <div class="wroom-cam-row">
+      <div class="wroom-vid"><video id="wcam" autoplay muted playsinline></video></div>
+      <div class="wroom-cam-btns">
+        <button class="wcbtn" id="wcam-connect" onclick="startWaitingVideo()">📷 Enable Camera</button>
+        <button class="wcbtn" id="wcam-mute" onclick="toggleMute()" style="display:none">🎤 Mute</button>
+        <button class="wcbtn" id="wcam-camoff" onclick="toggleCam()" style="display:none">📷 Hide Cam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Series format -->
   <div style="font-size:.72rem;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Series Format</div>
   <div class="series-row" id="srow">
     <button class="sbtn on" data-t="single" onclick="selSeries('single')">Single</button>
     <button class="sbtn" data-t="bo3" onclick="selSeries('bo3')">Best of 3</button>
     <button class="sbtn" data-t="bo5" onclick="selSeries('bo5')">Best of 5</button>
   </div>
+
   <div style="display:flex;flex-direction:column;gap:9px">
     <button class="btn btn-gold" id="btnstart" style="display:none" onclick="sock.emit('start_game')">Start Game</button>
     <button class="btn btn-sec" id="btnbots" style="display:none" onclick="sock.emit('start_with_bots')">Start with AI Players</button>
@@ -290,6 +359,9 @@ input:focus{border-color:var(--gold)}
     <button class="btn btn-gold" onclick="restart('single')">Play Again</button>
     <button class="btn btn-sec" onclick="restart('bo3')">Best of 3</button>
     <button class="btn btn-sec" onclick="restart('bo5')">Best of 5</button>
+    <div style="height:1px;background:rgba(255,255,255,.1);margin:4px 0"></div>
+    <button class="btn btn-sec" style="font-size:.82rem" onclick="restart('bo3',true)">→ Continue to Best of 3 (counts this game)</button>
+    <button class="btn btn-sec" style="font-size:.82rem" onclick="restart('bo5',true)">→ Continue to Best of 5 (counts this game)</button>
   </div>
 </div>
 </div>
@@ -313,12 +385,12 @@ const SI={S:'♠',H:'♥',D:'♦',C:'♣'},SN={S:'Spades',H:'Hearts',D:'Diamonds
 const isRed=s=>s==='H'||s==='D';
 let sock=null,myRoom=null,mySeat=null,myName='',hostId=null,GS=null,RS=null,rtcCfg=null,localStream=null,peers={},muted=false,camOff=false,vidSlots={};
 
-function randCode(){const w=['ACE','KING','JACK','BOWER','TRUMP','DEAL'];return w[Math.floor(Math.random()*w.length)]+Math.floor(Math.random()*900+100)}
+function randCode(){const w=['ACE','KING','JACK','BOWER','TRUMP','DEAL'];return w[Math.floor(Math.random()*w.length)]+(Math.floor(Math.random()*900+100))}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function toast(m,d=2500){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),d)}
 function switchTab(t){document.querySelectorAll('.tab').forEach((e,i)=>e.classList.toggle('on',(i===0&&t==='chat')||(i===1&&t==='video')));document.getElementById('pchat').classList.toggle('on',t==='chat');document.getElementById('pvideo').classList.toggle('on',t==='video')}
 function selSeries(t){if(sock&&sock.id===hostId)sock.emit('select_series',{seriesType:t})}
-function restart(t){document.getElementById('ovgo').classList.remove('on');document.getElementById('ovser').classList.remove('on');sock.emit('restart_game',{seriesType:t})}
+function restart(t,countCurrent){document.getElementById('ovgo').classList.remove('on');document.getElementById('ovser').classList.remove('on');sock.emit('restart_game',{seriesType:t,countCurrentGame:!!countCurrent})}
 
 function cardEl(c,size='md',playable=false){
   const d=document.createElement('div');
@@ -329,21 +401,32 @@ function cardEl(c,size='md',playable=false){
 }
 function backEl(size='sm'){const d=document.createElement('div');d.className=`cback ${size}`;return d}
 
+// Pre-fill room code from URL hash on load
+(function(){const h=window.location.hash.replace('#','').trim();if(h)document.getElementById('lroom').value=h})();
+
 function joinRoom(){
   const n=document.getElementById('lname').value.trim();
-  const r=document.getElementById('lroom').value.trim();
+  const r=document.getElementById('lroom').value.trim().toUpperCase();
   if(!n){toast('Enter your name');return}
   if(!r){toast('Enter a room code');return}
-  myName=n;myRoom=r;connect();
+  myName=n;myRoom=r;
+  window.location.hash=r;
+  connect();
+}
+function copyLink(){
+  const url=document.getElementById('wshareurl').textContent;
+  navigator.clipboard.writeText(url).then(()=>{
+    const b=document.getElementById('wcopybtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1800);
+  }).catch(()=>toast('Copy failed'));
 }
 
 function connect(){
   sock=io();
   sock.on('connect',()=>sock.emit('join_room',{roomId:myRoom,playerName:myName}));
   sock.on('joined_room',({roomId,seat,name,hostId:hid,players})=>{
-    mySeat=seat;myName=name;hostId=hid;
+    mySeat=seat;myName=name;hostId=hid;myRoom=roomId;
+    window.location.hash=roomId;
     show('waiting');
-    document.getElementById('wcode').textContent=roomId;
     updateWaiting(players,hid,'single');
   });
   sock.on('room_state',s=>{
@@ -366,15 +449,36 @@ function connect(){
 }
 
 function updateWaiting(players,hid,st){
-  const g=document.getElementById('seats');g.innerHTML='';
-  const labels=['Seat 1','Seat 2','Seat 3','Seat 4'];
-  for(let s=0;s<4;s++){
-    const p=players.find(x=>x.seat===s);
-    const d=document.createElement('div');
-    d.className='seat'+(p?' taken':'')+(p&&p.seat===mySeat?' me':'');
-    d.innerHTML=`<div class="seat-name">${p?(p.isBot?'🤖 '+p.name:p.name):'Empty'}</div><div class="seat-lbl">${labels[s]}</div>`;
-    g.appendChild(d);
-  }
+  // Share URL
+  const shareUrl=window.location.origin+'/#'+myRoom;
+  document.getElementById('wshareurl').textContent=shareUrl;
+
+  // Team columns: Team 1 = seats 0,2 ; Team 2 = seats 1,3
+  [[0,2],[1,3]].forEach((seats,teamIdx)=>{
+    const col=document.getElementById('team'+teamIdx);col.innerHTML='';
+    seats.forEach(sn=>{
+      const p=players.find(x=>x.seat===sn);
+      const isMe=p&&p.seat===mySeat;
+      const d=document.createElement('div');
+      if(p){
+        d.className='team-player taken'+(isMe?' me':'');
+        const other=teamIdx===0?2:1;
+        d.innerHTML=`<span>${p.isBot?'🤖 ':''}<strong>${p.name}</strong>${isMe?'<span class="you-badge">(You)</span>':''}</span>`
+          +(isMe?`<button class="swap-btn" onclick="sock.emit('swap_seats')">→ Team ${other}</button>`:'');
+      }else{
+        d.className='team-player empty';d.textContent='Empty';
+      }
+      col.appendChild(d);
+    });
+  });
+
+  // Status
+  const bots=players.filter(p=>p.isBot).length;
+  const humans=players.filter(p=>!p.isBot).length;
+  const needed=4-players.length;
+  const st2=document.getElementById('wstatus');
+  st2.textContent=needed>0?`Waiting for ${needed} more player${needed!==1?'s':''}...`:'All players joined!';
+
   if(st)updSerBtns(st);
 }
 function updSerBtns(t){document.querySelectorAll('.sbtn').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
@@ -533,17 +637,37 @@ function addMsg(type,name,text){
 function sendChat(){const i=document.getElementById('ci');const m=i.value.trim();if(!m||!sock)return;sock.emit('chat_message',{message:m});i.value=''}
 
 /* WebRTC */
-async function startVideo(){
+async function startWaitingVideo(){
   try{
     localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    document.getElementById('wcam').srcObject=localStream;
     document.getElementById('v0').srcObject=localStream;
     if(!rtcCfg){const r=await fetch('/api/rtc-config');rtcCfg=await r.json()}
-    // Show mute/cam buttons, hide connect button
+    document.getElementById('wcam-connect').style.display='none';
+    document.getElementById('wcam-mute').style.display='';
+    document.getElementById('wcam-camoff').style.display='';
     document.getElementById('vbtn-connect').style.display='none';
     document.getElementById('vbtn-mute').style.display='';
     document.getElementById('vbtn-cam').style.display='';
     toast('Camera & mic connected!');
-    // Call any already-joined peers
+    if(RS)RS.players.filter(p=>!p.isBot&&p.id!==sock.id).forEach(p=>initiateCall(p.id));
+  }catch(e){toast('Camera error: '+e.message)}
+}
+async function startVideo(){
+  try{
+    if(!localStream){
+      localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+      document.getElementById('wcam').srcObject=localStream;
+    }
+    document.getElementById('v0').srcObject=localStream;
+    if(!rtcCfg){const r=await fetch('/api/rtc-config');rtcCfg=await r.json()}
+    document.getElementById('vbtn-connect').style.display='none';
+    document.getElementById('vbtn-mute').style.display='';
+    document.getElementById('vbtn-cam').style.display='';
+    document.getElementById('wcam-connect').style.display='none';
+    document.getElementById('wcam-mute').style.display='';
+    document.getElementById('wcam-camoff').style.display='';
+    toast('Camera & mic connected!');
     if(RS)RS.players.filter(p=>!p.isBot&&p.id!==sock.id).forEach(p=>initiateCall(p.id));
   }catch(e){toast('Camera error: '+e.message)}
 }
@@ -585,17 +709,15 @@ async function handleOffer(fromId,offer){
 function toggleMute(){
   muted=!muted;
   if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!muted);
-  const b=document.getElementById('vbtn-mute');
-  b.textContent=muted?'🔇 Unmute':'🎤 Mute';
-  b.classList.toggle('off',muted);
+  const txt=muted?'🔇 Unmute':'🎤 Mute';
+  ['vbtn-mute','wcam-mute'].forEach(id=>{const b=document.getElementById(id);if(b){b.textContent=txt;b.classList.toggle('off',muted)}});
   if(sock)sock.emit('media_state',{muted,videoOff:camOff});
 }
 function toggleCam(){
   camOff=!camOff;
   if(localStream)localStream.getVideoTracks().forEach(t=>t.enabled=!camOff);
-  const b=document.getElementById('vbtn-cam');
-  b.textContent=camOff?'📷 Show Cam':'📷 Hide Cam';
-  b.classList.toggle('off',camOff);
+  const txt=camOff?'📷 Show Cam':'📷 Hide Cam';
+  ['vbtn-cam','wcam-camoff'].forEach(id=>{const b=document.getElementById(id);if(b){b.textContent=txt;b.classList.toggle('off',camOff)}});
   if(sock)sock.emit('media_state',{muted,videoOff:camOff});
 }
 /* Build stamp */
