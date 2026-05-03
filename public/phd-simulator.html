@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHD Product Simulator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#ffd700;--accent:#2563eb}
+body{background:#0a0f1a;color:#f0f0f0;font-family:system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 20px}
+.wrap{width:100%;max-width:720px}
+h1{font-size:1.9rem;color:var(--gold);margin-bottom:6px}
+.sub{color:rgba(255,255,255,.45);font-size:.88rem;margin-bottom:30px}
+.step{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:22px;margin-bottom:16px;transition:border-color .2s}
+.step.active{border-color:rgba(255,215,0,.4)}
+.step-num{font-size:.72rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.step-q{font-size:1rem;font-weight:600;margin-bottom:14px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{padding:9px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .15s}
+.opt:hover{background:rgba(255,215,0,.09);border-color:rgba(255,215,0,.35)}
+.opt.sel{background:rgba(255,215,0,.14);border-color:var(--gold);color:var(--gold)}
+.btn{padding:11px 22px;border:none;border-radius:8px;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-gold{background:var(--gold);color:#1a1a1a}.btn-gold:hover{background:#ffe44d}
+.btn-sec{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.16)}.btn-sec:hover{background:rgba(255,255,255,.14)}
+.btn-row{display:flex;gap:10px;margin-top:20px}
+#results{display:none}
+.result-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:24px;margin-bottom:14px}
+.rc-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rc-icon{font-size:2rem}
+.rc-title{font-size:1.1rem;font-weight:700;color:var(--gold)}
+.rc-series{font-size:.78rem;color:rgba(255,255,255,.4);margin-top:2px}
+.rc-desc{font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.8);margin-bottom:14px}
+.rc-features{display:flex;flex-wrap:wrap;gap:6px}
+.feat{background:rgba(255,215,0,.09);border:1px solid rgba(255,215,0,.22);border-radius:20px;padding:3px 11px;font-size:.75rem;color:var(--gold)}
+.match-score{float:right;font-size:.8rem;color:#86efac;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.28);border-radius:20px;padding:2px 10px}
+.no-results{text-align:center;color:rgba(255,255,255,.35);padding:40px;font-size:.95rem}
+nav{margin-bottom:24px;font-size:.8rem;color:rgba(255,255,255,.35)}
+nav a{color:rgba(255,255,255,.4);text-decoration:none}nav a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="/">← Euchre</a> · <a href="/phd-game">PHD Game</a></nav>
+  <h1>🏭 PHD Product Simulator</h1>
+  <p class="sub">Answer a few questions about your application and get matched to the right PHD product.</p>
+
+  <div id="form-area">
+    <!-- Step 1 -->
+    <div class="step active" id="s1">
+      <div class="step-num">Step 1 of 5</div>
+      <div class="step-q">What type of motion do you need?</div>
+      <div class="opts" id="o1">
+        <div class="opt" data-v="linear">Linear (push/pull)</div>
+        <div class="opt" data-v="grip">Gripping / clamping</div>
+        <div class="opt" data-v="rotary">Rotary (turn/index)</div>
+        <div class="opt" data-v="multi">Multi-motion (rotate + extend)</div>
+        <div class="opt" data-v="feed">Parts feeding / escapement</div>
+        <div class="opt" data-v="clamp">Workholding / fixture clamping</div>
+      </div>
+    </div>
+    <!-- Step 2 -->
+    <div class="step" id="s2">
+      <div class="step-num">Step 2 of 5</div>
+      <div class="step-q">What is the environment like?</div>
+      <div class="opts" id="o2">
+        <div class="opt" data-v="standard">Standard factory floor</div>
+        <div class="opt" data-v="washdown">Washdown / food processing (IP69K)</div>
+        <div class="opt" data-v="cleanroom">Cleanroom / medical</div>
+        <div class="opt" data-v="weld">Weld spatter / high heat</div>
+        <div class="opt" data-v="compact">Very tight space (&lt;2 in)</div>
+        <div class="opt" data-v="outdoor">Outdoor / harsh weather</div>
+      </div>
+    </div>
+    <!-- Step 3 -->
+    <div class="step" id="s3">
+      <div class="step-num">Step 3 of 5</div>
+      <div class="step-q">What best describes the part or load?</div>
+      <div class="opts" id="o3">
+        <div class="opt" data-v="fragile">Fragile / soft (food, medical)</div>
+        <div class="opt" data-v="heavy">Heavy / rigid metal parts</div>
+        <div class="opt" data-v="small">Small fasteners / tiny parts</div>
+        <div class="opt" data-v="sheet">Sheet metal / flat panels</div>
+        <div class="opt" data-v="long">Long stroke required (&gt;10 in)</div>
+        <div class="opt" data-v="any">General / varied parts</div>
+      </div>
+    </div>
+    <!-- Step 4 -->
+    <div class="step" id="s4">
+      <div class="step-num">Step 4 of 5</div>
+      <div class="step-q">What are your cycle rate requirements?</div>
+      <div class="opts" id="o4">
+        <div class="opt" data-v="high">Very high (&gt;50M cycles lifetime)</div>
+        <div class="opt" data-v="med">Medium (standard industrial)</div>
+        <div class="opt" data-v="low">Low / infrequent</div>
+        <div class="opt" data-v="any">Not a primary concern</div>
+      </div>
+    </div>
+    <!-- Step 5 -->
+    <div class="step" id="s5">
+      <div class="step-num">Step 5 of 5</div>
+      <div class="step-q">Do you need electric (programmable) or pneumatic actuation?</div>
+      <div class="opts" id="o5">
+        <div class="opt" data-v="pneumatic">Pneumatic (air-powered)</div>
+        <div class="opt" data-v="electric">Electric (servo / stepper)</div>
+        <div class="opt" data-v="either">Either / not sure</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="findProducts()">Find PHD Products →</button>
+      <button class="btn btn-sec" onclick="resetForm()">Reset</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <h2 style="color:var(--gold);margin-bottom:6px">Recommended PHD Products</h2>
+    <p style="color:rgba(255,255,255,.4);font-size:.82rem;margin-bottom:18px">Based on your application requirements</p>
+    <div id="result-list"></div>
+    <div class="btn-row"><button class="btn btn-sec" onclick="resetForm()">← Start Over</button></div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS=[
+  {id:'flexion',icon:'🤏',title:'PHD Flexion Gripper',series:'Flexion Series',desc:'Bending-finger design that conforms to irregular and fragile shapes. Ideal for food, pharmaceutical, and delicate consumer goods. Provides adaptive, gentle grip without concentrating stress.',features:['Adaptive grip','Food-safe','Fragile parts','Conforms to shape'],motion:['grip'],env:['standard','cleanroom','washdown'],part:['fragile','any'],cycle:['med','low','any'],power:['pneumatic','either']},
+  {id:'ea_el',icon:'💪',title:'PHD Series EA/EL/EH Gripper',series:'EA / EL / EH Series',desc:'Rugged parallel grippers built for high impact and shock loads. Bronze bearings for long wear life. Supports internal and external gripping. Fully rebuildable in-house. Standard choice for heavy-duty end-of-arm robot tooling.',features:['High shock load','Bronze bearings','Rebuildable','Internal & external grip','EOAT'],motion:['grip'],env:['standard','weld'],part:['heavy','sheet','any'],cycle:['high','med','any'],power:['pneumatic','either']},
+  {id:'tomthumb',icon:'🔩',title:'PHD Tom Thumb® Cylinder',series:'Tom Thumb® Series',desc:'The benchmark for compact, high-cycle pneumatic cylinders. Proven durability, rebuildability, and versatility in the smallest possible envelope. The go-to for tight automotive assembly stations.',features:['Ultra-compact','50M+ cycles','Rebuildable','Automotive proven'],motion:['linear'],env:['compact','standard','weld'],part:['any','small'],cycle:['high','med'],power:['pneumatic','either']},
+  {id:'cv_iso',icon:'↔️',title:'PHD Series CV ISO Cylinder',series:'CV ISO Series',desc:'Long-travel pneumatic cylinder with ISO-standard mounting for cross-line interchangeability. Designed for long stroke lengths and extended machine life. The standard solution for packaging and material transfer lines.',features:['Long stroke','ISO mounting','Interchangeable','Long machine life'],motion:['linear'],env:['standard'],part:['long','any'],cycle:['med','any'],power:['pneumatic','either']},
+  {id:'ecp_ip69k',icon:'💧',title:'PHD Plus® ECP IP69K Electric Cylinder',series:'Plus® ECP Series',desc:'100% designed for high-pressure, high-temperature washdown and CIP environments. Rated IP69K — the highest ingress protection rating. Available in ball screw or lead screw versions for high thrust or high speed.',features:['IP69K rated','CIP/washdown','Food-safe','Electric precision','Ball/lead screw'],motion:['linear'],env:['washdown','cleanroom'],part:['any'],cycle:['med','high','any'],power:['electric','either']},
+  {id:'minielectric',icon:'⚙️',title:'PHD Precision Miniature Electric Gripper',series:'Electric Gripper Series',desc:'High-precision, low-force grippers with programmable force control. FDA-compliant materials available. Designed for cleanroom and medical device assembly where repeatable, controlled grip is critical.',features:['Force control','FDA-compliant','Cleanroom safe','Precision','Programmable'],motion:['grip'],env:['cleanroom','standard'],part:['fragile','small','any'],cycle:['med','any'],power:['electric','either']},
+  {id:'clamp',icon:'🗜️',title:'PHD Pneumatic Clamp',series:'Pneumatic Clamp Series',desc:'Purpose-built for automated sheet metal stamping, welding, metal forming, and assembly fixtures. Low cost of ownership, exceptional flexibility, and rugged enough for the most demanding weld environments.',features:['Weld-rated','Sheet metal','Fixture use','Rugged','Low cost of ownership'],motion:['clamp'],env:['weld','standard'],part:['sheet','heavy','any'],cycle:['high','med','any'],power:['pneumatic','either']},
+  {id:'multimotion',icon:'🔄',title:'PHD Multi-Motion Actuator',series:'Multi-Motion Series',desc:'Provides independent rotary and linear motion from a single output shaft. Replaces two separate actuators for part turnaround and orientation operations. Simplifies plumbing, mounting, and sequencing.',features:['Rotary + linear','Single unit','Part orientation','Compact'],motion:['multi'],env:['standard'],part:['any'],cycle:['med','any'],power:['pneumatic','either']},
+  {id:'rotary',icon:'↩️',title:'PHD Rotary Actuator',series:'Rotary Actuator Series',desc:'Delivers controlled rotational motion for indexing, turning, and positioning applications. Available in rack-and-pinion and vane configurations. Adjustable rotation angle.',features:['Rotary indexing','Adjustable angle','Rack & pinion','Vane options'],motion:['rotary'],env:['standard','weld'],part:['any'],cycle:['high','med','any'],power:['pneumatic','either']},
+  {id:'escapement',icon:'📦',title:'PHD Pneumatic Escapement',series:'Escapement Series',desc:'Purpose-built to release parts one at a time from vibratory feeders, hoppers, and part magazines. Handles high side loads from the part queue. Available in single and double rod configurations.',features:['Parts feeding','One-at-a-time','High side load','Vibratory bowl compatible'],motion:['feed'],env:['standard'],part:['small','any'],cycle:['high','med','any'],power:['pneumatic','either']},
+  {id:'heavy',icon:'🏋️',title:'PHD Heavy Duty Cylinder',series:'Heavy Duty Series',desc:'Designed for applications with high side loads, shock, and aggressive environments. Cartridge bushing design for extended service life under demanding conditions.',features:['High side load','Shock resistant','Cartridge bushings','Aggressive environments'],motion:['linear'],env:['weld','standard'],part:['heavy','any'],cycle:['med','high'],power:['pneumatic','either']},
+];
+
+const answers={};
+
+// Bind option clicks
+document.querySelectorAll('.opts').forEach(group=>{
+  group.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click',()=>{
+      group.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+      opt.classList.add('sel');
+      const stepEl=group.closest('.step');
+      stepEl.classList.remove('active');
+      const num=parseInt(stepEl.id.replace('s',''));
+      answers['s'+num]=opt.dataset.v;
+      const next=document.getElementById('s'+(num+1));
+      if(next)next.classList.add('active');
+    });
+  });
+});
+
+function score(p){
+  let s=0;
+  if(answers.s1&&p.motion.includes(answers.s1))s+=40;
+  if(answers.s2&&p.env.includes(answers.s2))s+=25;
+  if(answers.s3&&p.part.includes(answers.s3))s+=20;
+  if(answers.s4&&p.cycle.includes(answers.s4))s+=8;
+  if(answers.s5&&p.power.includes(answers.s5))s+=7;
+  return s;
+}
+
+function findProducts(){
+  const scored=PRODUCTS.map(p=>({...p,score:score(p)})).sort((a,b)=>b.score-a.score).filter(p=>p.score>0).slice(0,4);
+  const list=document.getElementById('result-list');list.innerHTML='';
+  if(!scored.length){
+    list.innerHTML='<div class="no-results">No strong matches found. Try adjusting your selections above.</div>';
+  }else{
+    scored.forEach(p=>{
+      const pct=Math.round((p.score/100)*100);
+      const d=document.createElement('div');d.className='result-card';
+      d.innerHTML=`
+        <div class="rc-header">
+          <div class="rc-icon">${p.icon}</div>
+          <div><div class="rc-title">${p.title} <span class="match-score">${pct}% match</span></div><div class="rc-series">${p.series}</div></div>
+        </div>
+        <div class="rc-desc">${p.desc}</div>
+        <div class="rc-features">${p.features.map(f=>`<span class="feat">${f}</span>`).join('')}</div>
+      `;
+      list.appendChild(d);
+    });
+  }
+  document.getElementById('form-area').style.display='none';
+  document.getElementById('results').style.display='block';
+}
+
+function resetForm(){
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('active',i===0));
+  document.getElementById('form-area').style.display='block';
+  document.getElementById('results').style.display='none';
+}
+</script>
+</body>
+</html>
