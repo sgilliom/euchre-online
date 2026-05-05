@@ -318,7 +318,7 @@ button { touch-action: manipulation; }
 
 .zone-top  .player-video-wrap { width: min(190px, 14vw); height: min(143px, 17vh); }
 .zone-left .player-video-wrap,
-.zone-right .player-video-wrap { width: min(175px, 13vw); height: min(175px, 22vh); }
+.zone-right .player-video-wrap { width: min(210px, 85%); aspect-ratio: 4/3; height: auto; }
 .local-video-wrap { width: min(165px, 12vw); height: min(125px, 14vh); border-color: var(--gold) !important; }
 
 video { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -585,7 +585,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .zone-top  .player-video-wrap { width: min(140px, 13vw); height: min(105px, 16vh); }
   .zone-left .player-video-wrap,
-  .zone-right .player-video-wrap { width: min(130px, 12vw); height: min(98px, 14vh); }
+  .zone-right .player-video-wrap { width: min(150px, 85%); aspect-ratio: 4/3; height: auto; }
   .local-video-wrap { width: min(140px, 13vw); height: min(105px, 16vh); }
 
   .card.hand-card  { width: 70px; height: 103px; }
@@ -641,7 +641,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   /* Video tiles — slightly smaller than iPad to fit the fixed viewport budget */
   .zone-top   .player-video-wrap { width: min(130px, 13vw); height: min(90px, 14vh); }
   .zone-left  .player-video-wrap,
-  .zone-right .player-video-wrap { display: block; width: min(130px, 13vw); height: min(90px, 14vh); }
+  .zone-right .player-video-wrap { display: block; width: min(130px, 85%); aspect-ratio: 4/3; height: auto; }
   .zone-top .player-label { font-size: .7rem; max-width: min(140px, 13vw); }
 
   .zone-left, .zone-right { justify-content: center; gap: 3px; }
@@ -752,7 +752,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   }
   .zone-top  .player-video-wrap { width: min(260px, 17vw); height: min(195px, 22vh); }
   .zone-left .player-video-wrap,
-  .zone-right .player-video-wrap { width: min(245px, 16vw); height: min(184px, 20vh); }
+  .zone-right .player-video-wrap { width: min(245px, 85%); aspect-ratio: 4/3; height: auto; }
   .local-video-wrap { width: min(260px, 17vw); height: min(195px, 22vh); }
 
   .card.hand-card  { width: 96px;  height: 141px; font-size: 1.4rem; }
@@ -777,7 +777,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   }
   .zone-top  .player-video-wrap { width: min(310px, 17vw); height: min(233px, 22vh); }
   .zone-left .player-video-wrap,
-  .zone-right .player-video-wrap { width: min(290px, 16vw); height: min(218px, 20vh); }
+  .zone-right .player-video-wrap { width: min(290px, 85%); aspect-ratio: 4/3; height: auto; }
   .local-video-wrap { width: min(310px, 17vw); height: min(233px, 22vh); }
 
   .card.hand-card  { width: 108px; height: 158px; font-size: 1.6rem; }
