@@ -262,7 +262,7 @@ button { touch-action: manipulation; }
   grid-template-columns: 240px 1fr 240px;
   /* Cap rows so they never eat the center/bottom on short screens.
      Row 3 tall enough for video+cards with flex-end breathing room above. */
-  grid-template-rows: min(190px, 22vh) 1fr min(230px, 27vh);
+  grid-template-rows: min(190px, 22vh) 1fr min(185px, 21vh);
   background: radial-gradient(ellipse at 50% 40%, var(--green-mid), var(--green-dark));
   gap: 8px;
   padding: 8px;
@@ -280,8 +280,8 @@ button { touch-action: manipulation; }
 /* justify-content: flex-start anchors the video at the TOP of each side zone.
    With overflow:hidden, center/start avoids the video being clipped off the top
    when the zone is shorter than the total content (video+name+card-backs). */
-.zone-left   { grid-area: left;   justify-content: center; overflow: hidden; min-height: 0; }
-.zone-right  { grid-area: right;  justify-content: center; overflow: hidden; min-height: 0; }
+.zone-left   { grid-area: left;   justify-content: center; overflow: visible; min-height: 0; }
+.zone-right  { grid-area: right;  justify-content: center; overflow: visible; min-height: 0; }
 .zone-center { grid-area: center; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 6px; min-height: 0; }
 .zone-bottom { grid-area: bottom; display: flex; flex-direction: row;
@@ -580,7 +580,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
 @media (max-width: 1024px) and (min-width: 600px) {
   #table {
     grid-template-columns: 170px 1fr 170px;
-    grid-template-rows: min(160px, 22vh) 1fr min(215px, 30vh);
+    grid-template-rows: min(160px, 22vh) 1fr min(180px, 24vh);
   }
 
   /* Match phone breakpoint: allow content to be visible so nothing is clipped */
@@ -751,7 +751,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   #table {
     grid-template-columns: 320px 1fr 320px;
     /* vh cap prevents rows from squeezing center/bottom on short screens */
-    grid-template-rows: min(265px, 25vh) 1fr min(345px, 38vh);
+    grid-template-rows: min(265px, 25vh) 1fr min(240px, 26vh);
   }
   .zone-top  .player-video-wrap { width: min(260px, 17vw); height: min(195px, 22vh); }
   .zone-left .player-video-wrap,
@@ -776,7 +776,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
 @media (min-width: 1800px) {
   #table {
     grid-template-columns: 380px 1fr 380px;
-    grid-template-rows: min(300px, 25vh) 1fr min(400px, 38vh);
+    grid-template-rows: min(300px, 25vh) 1fr min(270px, 26vh);
   }
   .zone-top  .player-video-wrap { width: min(310px, 17vw); height: min(233px, 22vh); }
   .zone-left .player-video-wrap,
