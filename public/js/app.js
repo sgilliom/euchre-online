@@ -773,7 +773,7 @@ function renderAllZones(s) {
     }
 
     const count = sittingOut ? 0 : (s.cardCounts?.[seat] ?? 0);
-    cardsEl.className = (pos === 'left' || pos === 'right') ? 'card-backs vertical' : 'card-backs';
+    cardsEl.className = 'card-backs';
     cardsEl.innerHTML = Array(count).fill('<div class="card-back"></div>').join('');
   }
   // Re-apply any remote streams that arrived while the waiting screen was visible
