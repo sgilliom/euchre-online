@@ -1,0 +1,53 @@
+<svg viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+  <!-- background -->
+  <rect width="480" height="220" fill="#0f172a" rx="8"/>
+  <!-- label -->
+  <text x="240" y="20" fill="#6366f1" font-size="11" text-anchor="middle" font-weight="bold">FOOD &amp; BEVERAGE — ICE CREAM CONE HANDLING</text>
+
+  <!-- conveyor belt -->
+  <rect x="30" y="150" width="420" height="14" fill="#334155" rx="3"/>
+  <rect x="30" y="158" width="420" height="6" fill="#1e3a5f" rx="2"/>
+  <circle cx="50" cy="157" r="10" fill="#475569" stroke="#64748b" stroke-width="1.5"/>
+  <circle cx="430" cy="157" r="10" fill="#475569" stroke="#64748b" stroke-width="1.5"/>
+  <!-- conveyor rollers -->
+  <line x1="100" y1="150" x2="100" y2="164" stroke="#475569" stroke-width="1"/>
+  <line x1="160" y1="150" x2="160" y2="164" stroke="#475569" stroke-width="1"/>
+  <line x1="220" y1="150" x2="220" y2="164" stroke="#475569" stroke-width="1"/>
+  <line x1="280" y1="150" x2="280" y2="164" stroke="#475569" stroke-width="1"/>
+  <line x1="340" y1="150" x2="340" y2="164" stroke="#475569" stroke-width="1"/>
+  <line x1="400" y1="150" x2="400" y2="164" stroke="#475569" stroke-width="1"/>
+
+  <!-- arrow direction -->
+  <polygon points="460,154 450,149 450,159" fill="#6366f1"/>
+
+  <!-- cone 1 (left) -->
+  <polygon points="100,148 90,185 110,185" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+  <ellipse cx="100" cy="148" rx="10" ry="5" fill="#fde68a"/>
+  <ellipse cx="100" cy="143" rx="8" ry="7" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
+
+  <!-- cone 2 (middle - being gripped) -->
+  <polygon points="240,148 230,185 250,185" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+  <ellipse cx="240" cy="148" rx="10" ry="5" fill="#fde68a"/>
+  <ellipse cx="240" cy="143" rx="8" ry="7" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
+
+  <!-- gripper body above cone 2 -->
+  <rect x="228" y="60" width="24" height="18" fill="#6366f1" rx="3"/>
+  <!-- gripper fingers (curved/flexion style) -->
+  <path d="M228,78 Q218,95 225,120 Q230,135 240,140" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M252,78 Q262,95 255,120 Q250,135 240,140" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- gripper mount -->
+  <rect x="234" y="40" width="12" height="22" fill="#475569" rx="2"/>
+  <line x1="240" y1="30" x2="240" y2="40" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="220" y="25" width="40" height="8" fill="#334155" rx="2"/>
+
+  <!-- packaging box (right) -->
+  <rect x="360" y="120" width="60" height="45" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5" rx="3"/>
+  <line x1="360" y1="130" x2="420" y2="130" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="390" y="145" fill="#60a5fa" font-size="9" text-anchor="middle">PACKAGING</text>
+
+  <!-- labels -->
+  <text x="100" y="200" fill="#94a3b8" font-size="9" text-anchor="middle">INCOMING</text>
+  <text x="240" y="200" fill="#22c55e" font-size="9" text-anchor="middle">PICK POINT</text>
+  <text x="390" y="200" fill="#94a3b8" font-size="9" text-anchor="middle">PLACE TARGET</text>
+  <text x="240" y="110" fill="#22c55e" font-size="9" text-anchor="middle">FLEXION GRIPPER</text>
+</svg>

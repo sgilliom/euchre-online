@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHD Solution Game — Automation Expert Challenge</title>
+  <link rel="stylesheet" href="/css/phd-game.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     WELCOME SCREEN
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-card">
+    <div class="logo">
+      <span class="logo-icon">🎓</span>
+      <h1>PHD Solution Game</h1>
+      <p class="tagline">Test your professional decision-making skills</p>
+    </div>
+
+    <div class="how-it-works">
+        <div class="how-item"><span>🏭</span><span>Real PHD Inc. automation application scenarios</span></div>
+      <div class="how-item"><span>🤖</span><span>AI-powered feedback on every answer</span></div>
+      <div class="how-item"><span>🏆</span><span>Score up to 450 points &amp; rank on the leaderboard</span></div>
+    </div>
+
+    <form id="form-start" class="start-form">
+      <div class="form-group">
+        <label for="player-name">Your Name</label>
+        <input type="text" id="player-name" placeholder="e.g. Jane Smith" autocomplete="name" required />
+      </div>
+      <div class="form-group">
+        <label for="player-email">Email Address <span class="hint">(saves your progress)</span></label>
+        <input type="email" id="player-email" placeholder="you@example.com" autocomplete="email" required />
+      </div>
+      <div id="form-error" class="form-error hidden"></div>
+      <button type="submit" class="btn btn-primary btn-large" id="btn-start">
+        <span class="btn-text">Start Game</span>
+        <span class="btn-spinner hidden">⏳</span>
+      </button>
+    </form>
+
+    <button class="btn btn-ghost" id="btn-show-history">View My History</button>
+    <button class="btn btn-ghost" id="btn-show-leaderboard-welcome">🏆 Leaderboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GAME SCREEN
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+  <header class="game-header">
+    <div class="game-header-left">
+      <span class="game-logo-small">🎓</span>
+      <span class="player-name-display" id="header-player-name"></span>
+    </div>
+    <div class="game-progress">
+      <span id="progress-label">Question 1 / 3</span>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+    <div class="score-display">
+      <span class="score-label">Score</span>
+      <span class="score-value" id="header-score">0</span>
+    </div>
+  </header>
+
+  <main class="game-main">
+    <!-- Question card -->
+    <div class="question-card" id="question-card">
+      <div class="question-meta">
+        <span class="category-badge" id="q-category"></span>
+        <span class="difficulty-badge" id="q-difficulty"></span>
+        <span class="points-badge" id="q-points"></span>
+      </div>
+      <h2 class="question-title" id="q-title"></h2>
+
+      <!-- Scenario diagram -->
+      <div class="scenario-diagram" id="scenario-diagram">
+        <img id="q-image" src="" alt="Application diagram" />
+      </div>
+
+      <p class="question-scenario" id="q-scenario"></p>
+
+      <div class="choices-grid" id="choices-grid"></div>
+
+      <!-- Feedback panel (hidden until answered) -->
+      <div class="feedback-panel hidden" id="feedback-panel">
+        <div class="feedback-result" id="feedback-result">
+          <span class="result-icon" id="result-icon"></span>
+          <span class="result-text" id="result-text"></span>
+          <span class="result-points" id="result-points"></span>
+        </div>
+        <div class="feedback-ai" id="feedback-ai">
+          <div class="ai-label">🤖 AI Analysis</div>
+          <div class="ai-text" id="ai-text"></div>
+        </div>
+        <button class="btn btn-primary" id="btn-next">
+          <span id="next-label">Next Question →</span>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RESULT SCREEN
+═══════════════════════════════════════════════════════════════ -->
+<div id="screen-result" class="screen">
+  <div class="result-card">
+    <div class="result-hero" id="result-hero">
+      <div class="result-emoji" id="result-emoji"></div>
+      <h2 id="result-headline"></h2>
+      <div class="score-big">
+        <span id="final-score">0</span>
+        <span class="score-divider"> / </span>
+        <span id="final-max">450</span>
+      </div>
+      <div class="score-pct-bar-wrap">
+        <div class="score-pct-bar-track">
+          <div class="score-pct-bar-fill" id="score-pct-bar"></div>
+        </div>
+        <span id="score-pct-label"></span>
+      </div>
+      <div id="new-best-badge" class="new-best-badge hidden">🏅 New Personal Best!</div>
+    </div>
+
+    <div class="result-stats">
+      <div class="stat-item">
+        <span class="stat-value" id="stat-correct"></span>
+        <span class="stat-label">Correct</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-rank"></span>
+        <span class="stat-label">Your Rank</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-pct"></span>
+        <span class="stat-label">Score %</span>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard-section">
+      <h3>🏆 Leaderboard</h3>
+      <div id="leaderboard-table-wrap">
+        <table class="leaderboard-table" id="leaderboard-table">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Best Score</th><th>%</th><th>Games</th></tr>
+          </thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary btn-large" id="btn-play-again">▶ Play Again</button>
+      <button class="btn btn-ghost" id="btn-home">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HISTORY MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div id="modal-history" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>📊 Your Game History</h3>
+      <button class="modal-close" id="btn-close-history">✕</button>
+    </div>
+    <div id="history-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LEADERBOARD MODAL (from welcome)
+═══════════════════════════════════════════════════════════════ -->
+<div id="modal-leaderboard" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>🏆 Global Leaderboard</h3>
+      <button class="modal-close" id="btn-close-leaderboard">✕</button>
+    </div>
+    <div id="leaderboard-modal-content"></div>
+  </div>
+</div>
+
+<script src="/js/phd-game.js"></script>
+</body>
+</html>

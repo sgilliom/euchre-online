@@ -3,7 +3,7 @@ services:
     name: euchre-online
     env: node
     plan: starter          # starter plan required for persistent disk
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: node server.js
     healthCheckPath: /health
     # Persistent disk keeps game.db (PHD Solution Game scores) across deploys/restarts

@@ -1,0 +1,62 @@
+<svg viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+  <rect width="480" height="220" fill="#0f172a" rx="8"/>
+  <text x="240" y="20" fill="#6366f1" font-size="11" text-anchor="middle" font-weight="bold">MULTI-MOTION ACTUATOR — REACH &amp; TURN OPERATION</text>
+
+  <!-- Step 1: start position -->
+  <rect x="25" y="40" width="120" height="155" fill="#0a1628" rx="6" stroke="#1e293b" stroke-width="1"/>
+  <text x="85" y="58" fill="#94a3b8" font-size="9" text-anchor="middle">STEP 1</text>
+  <text x="85" y="69" fill="#475569" font-size="8" text-anchor="middle">START</text>
+  <!-- actuator body -->
+  <rect x="68" y="80" width="34" height="60" fill="#1e3a5f" stroke="#6366f1" stroke-width="2" rx="4"/>
+  <!-- shaft pointing right (0°) -->
+  <rect x="100" y="105" width="25" height="8" fill="#60a5fa" rx="2"/>
+  <!-- part on shaft end (face up) -->
+  <rect x="123" y="100" width="16" height="18" fill="#f59e0b" rx="2" stroke="#d97706" stroke-width="1"/>
+  <text x="131" y="112" fill="#0f172a" font-size="7" text-anchor="middle">A</text>
+  <!-- gripper label -->
+  <text x="85" y="155" fill="#6366f1" font-size="8" text-anchor="middle">REACH: 0°</text>
+  <text x="85" y="165" fill="#6366f1" font-size="8" text-anchor="middle">ROTATE: 0°</text>
+
+  <!-- arrow 1→2 -->
+  <polygon points="158,110 150,104 150,116" fill="#22c55e"/>
+  <line x1="148" y1="110" x2="138" y2="110" stroke="#22c55e" stroke-width="2"/>
+
+  <!-- Step 2: extended -->
+  <rect x="165" y="40" width="120" height="155" fill="#0a1628" rx="6" stroke="#1e293b" stroke-width="1"/>
+  <text x="225" y="58" fill="#94a3b8" font-size="9" text-anchor="middle">STEP 2</text>
+  <text x="225" y="69" fill="#475569" font-size="8" text-anchor="middle">EXTEND</text>
+  <!-- actuator body -->
+  <rect x="208" y="80" width="34" height="60" fill="#1e3a5f" stroke="#6366f1" stroke-width="2" rx="4"/>
+  <!-- shaft extended further -->
+  <rect x="240" y="105" width="42" height="8" fill="#60a5fa" rx="2"/>
+  <!-- part on shaft end (face up, extended) -->
+  <rect x="280" y="100" width="16" height="18" fill="#f59e0b" rx="2" stroke="#d97706" stroke-width="1"/>
+  <text x="288" y="112" fill="#0f172a" font-size="7" text-anchor="middle">A</text>
+  <text x="225" y="155" fill="#22c55e" font-size="8" text-anchor="middle">REACH: EXTENDED</text>
+  <text x="225" y="165" fill="#6366f1" font-size="8" text-anchor="middle">ROTATE: 0°</text>
+
+  <!-- arrow 2→3 -->
+  <polygon points="298,110 290,104 290,116" fill="#22c55e"/>
+  <line x1="288" y1="110" x2="278" y2="110" stroke="#22c55e" stroke-width="2"/>
+
+  <!-- Step 3: rotated 180° -->
+  <rect x="305" y="40" width="150" height="155" fill="#0a1628" rx="6" stroke="#1e293b" stroke-width="1"/>
+  <text x="380" y="58" fill="#94a3b8" font-size="9" text-anchor="middle">STEP 3</text>
+  <text x="380" y="69" fill="#475569" font-size="8" text-anchor="middle">ROTATE 180°</text>
+  <!-- actuator body -->
+  <rect x="356" y="80" width="34" height="60" fill="#1e3a5f" stroke="#6366f1" stroke-width="2" rx="4"/>
+  <!-- shaft extended -->
+  <rect x="388" y="105" width="42" height="8" fill="#60a5fa" rx="2"/>
+  <!-- part now flipped (face down) -->
+  <rect x="428" y="100" width="16" height="18" fill="#22c55e" rx="2" stroke="#16a34a" stroke-width="1"/>
+  <text x="436" y="112" fill="#fff" font-size="7" text-anchor="middle">B</text>
+  <!-- rotation arc -->
+  <path d="M428,100 A18,18 0 0 1 428,118" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+  <polygon points="428,118 422,112 434,112" fill="#f59e0b"/>
+
+  <text x="380" y="155" fill="#22c55e" font-size="8" text-anchor="middle">REACH: EXTENDED</text>
+  <text x="380" y="165" fill="#22c55e" font-size="8" text-anchor="middle">ROTATE: 180°</text>
+
+  <!-- bottom label -->
+  <text x="240" y="205" fill="#f59e0b" font-size="9" text-anchor="middle">INDEPENDENT REACH + ROTATION FROM ONE OUTPUT SHAFT</text>
+</svg>

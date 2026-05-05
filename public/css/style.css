@@ -1,0 +1,790 @@
+/* ============================================================
+   Global reset & base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green-dark:  #0d4a1c;
+  --green-mid:   #166a2b;
+  --green-felt:  #1e8a3c;
+  --green-light: #27a349;
+  --gold:        #c9a84c;
+  --cream:       #fffdf0;
+  --card-shadow: 0 3px 8px rgba(0,0,0,.45);
+  --red:         #d32f2f;
+  --black:       #111;
+  --team0:       #1565c0;
+  --team1:       #c62828;
+}
+
+html, body {
+  height: 100%;
+  /* 100dvh accounts for mobile browser chrome (address bar) */
+  height: 100dvh;
+  background: #0a0a14;
+  color: #fff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
+  /* Prevent text size adjustment on mobile orientation change */
+  -webkit-text-size-adjust: 100%;
+}
+
+.screen { display: none; height: 100vh; height: 100dvh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* Prevent double-tap zoom on all buttons */
+button { touch-action: manipulation; }
+
+/* ============================================================
+   Lobby
+   ============================================================ */
+#screen-lobby {
+  align-items: center; justify-content: center; overflow-y: auto;
+  background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a14 80%);
+  padding: 1rem;
+}
+
+.lobby-container { width: 420px; max-width: 100%; }
+
+.logo { font-size: 2.5rem; text-align: center; margin-bottom: .3rem;
+  text-shadow: 0 2px 12px rgba(200,160,80,.8); }
+
+.subtitle { text-align: center; color: #aaa; margin-bottom: 1.8rem; }
+
+.join-form { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px; padding: 1.6rem; margin-bottom: 1.4rem; }
+
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; font-size: .82rem; color: #bbb; margin-bottom: .35rem; letter-spacing: .05em; }
+.form-group input { width: 100%; padding: .65rem .9rem; background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.2); border-radius: 8px; color: #fff; font-size: 1rem; outline: none; }
+.form-group input:focus { border-color: var(--gold); }
+
+.form-actions { display: flex; gap: .7rem; margin-top: 1.2rem; }
+
+.rules-summary { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; padding: 1rem 1.2rem; }
+.rules-summary h3 { margin-bottom: .6rem; color: var(--gold); font-size: .9rem; letter-spacing: .1em; }
+.rules-summary ul { padding-left: 1.2rem; }
+.rules-summary li { font-size: .82rem; color: #ccc; line-height: 1.7; }
+
+/* ============================================================
+   Waiting room
+   ============================================================ */
+#screen-waiting { align-items: center; justify-content: center; overflow-y: auto; padding: 1rem;
+  background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a14 80%); }
+
+.waiting-container { width: 480px; max-width: 100%; text-align: center; }
+.waiting-container h2 { margin-bottom: 1rem; font-size: 1.5rem; }
+
+.share-link { display: flex; gap: .5rem; margin-bottom: 1.4rem; }
+.share-link input { flex: 1; padding: .6rem .9rem; background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.2); border-radius: 8px; color: #ddd; font-size: .88rem; }
+
+.waiting-players { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.2rem; }
+.waiting-player { display: flex; align-items: center; gap: .9rem; padding: .7rem 1.1rem;
+  background: rgba(255,255,255,.06); border-radius: 10px; }
+.waiting-player.me { border: 1px solid var(--gold); }
+.waiting-player.bot-slot { opacity: .6; font-style: italic; }
+.player-seat { background: var(--green-mid); border-radius: 6px; padding: .15rem .5rem; font-size: .78rem; }
+.waiting-msg { color: #aaa; margin-top: .5rem; }
+
+/* ============================================================
+   Waiting-room media preview
+   ============================================================ */
+.waiting-media-controls { margin: .9rem 0 .4rem; }
+.wmc-label { font-size: .72rem; color: rgba(255,255,255,.4); text-transform: uppercase;
+  letter-spacing: .06em; margin-bottom: .55rem; text-align: center; }
+.wmc-row { display: flex; align-items: center; gap: 1rem; justify-content: center; }
+
+.wmc-preview-wrap { position: relative; width: 100px; height: 75px; flex-shrink: 0;
+  background: #111; border-radius: 8px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12); }
+.video-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
+.preview-cam-off-overlay { position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; background: rgba(0,0,0,.78); color: #666;
+  font-size: .72rem; pointer-events: none; }
+
+.wmc-btns { display: flex; flex-direction: column; gap: .5rem; }
+.btn-media-toggle { display: block; min-width: 132px; font-size: .83rem; padding: .4rem .85rem;
+  border-radius: 20px; border: 1px solid rgba(255,255,255,.28); background: rgba(255,255,255,.13);
+  color: #e0e0e0; cursor: pointer; text-align: center; transition: background .15s, border-color .15s; }
+.btn-media-toggle:hover { background: rgba(255,255,255,.22); }
+.btn-media-toggle.off { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.12); color: #666; }
+
+/* Team layout in waiting room */
+.team-setup { margin-bottom: 1.2rem; }
+.team-layout { display: flex; align-items: center; gap: .5rem; justify-content: center; }
+.team-col { display: flex; flex-direction: column; gap: .5rem; flex: 1; max-width: 180px; }
+.team-label { text-align: center; font-weight: 700; font-size: .95rem; padding: .25rem .6rem;
+  border-radius: 6px; margin-bottom: .15rem; }
+.team-label.team-a { background: rgba(100,181,246,.25); color: #90caf9; }
+.team-label.team-b { background: rgba(239,154,154,.25); color: #ef9a9a; }
+.wp-card { display: flex; flex-direction: column; gap: .15rem; padding: .55rem .8rem;
+  background: rgba(255,255,255,.06); border-radius: 10px; min-height: 52px;
+  cursor: default; user-select: none; transition: background .15s, box-shadow .15s; }
+.wp-card[draggable="true"] { cursor: grab; }
+.wp-card[draggable="true"]:active { cursor: grabbing; }
+.wp-card.me { border: 1px solid var(--gold); }
+.wp-card.bot { opacity: .7; font-style: italic; }
+.wp-card.empty { opacity: .4; }
+.wp-card.wp-selected { background: rgba(255,213,79,.18); box-shadow: 0 0 0 2px var(--gold); }
+.wp-seat { font-size: .72rem; color: #aaa; }
+.wp-name { font-size: 1rem; }
+.wp-you { font-size: .75rem; color: var(--gold); }
+.btn-move-team { margin-top: .4rem; background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.22); border-radius: 6px; color: #ccc;
+  font-size: .75rem; padding: .2rem .5rem; cursor: pointer; transition: background .15s; width: 100%; }
+.btn-move-team:hover { background: rgba(255,255,255,.24); color: #fff; }
+.drop-zone { transition: background .15s; border-radius: 10px; padding: .4rem; }
+.drop-zone.drag-over { background: rgba(255,255,255,.08); }
+.host-hint { font-size: .76rem; color: #888; margin-top: .5rem; }
+
+.start-bots-btn { margin-top: 1.2rem; width: 100%; font-size: 1rem; padding: .75rem; }
+.start-bots-btn.hidden { display: none; }
+.bots-hint { font-size: .75rem; color: #666; margin-top: .4rem; }
+
+/* Mute badge on remote video tiles */
+.mute-badge { position: absolute; top: 3px; left: 3px; background: rgba(0,0,0,.72);
+  border-radius: 4px; padding: 1px 4px; font-size: .7rem; line-height: 1.4;
+  pointer-events: none; z-index: 4; }
+.mute-badge.hidden { display: none; }
+
+/* Hand trick score strip in center zone */
+.hand-tricks { display: flex; align-items: center; justify-content: center;
+  gap: 6px; font-size: .9rem; letter-spacing: .04em; margin-top: 2px; }
+.ht-team { font-size: .75rem; letter-spacing: .06em; }
+.ht-t0   { color: #64b5f6; }
+.ht-t1   { color: #ef9a9a; }
+.ht-sep  { font-size: 1.1rem; font-weight: 700; color: #fff; min-width: 28px; text-align: center; }
+
+/* Dealer / maker / status badges on player name labels */
+.badge { display: inline-block; border-radius: 10px; padding: 1px 7px;
+  font-size: .76rem; font-weight: 700; vertical-align: middle; margin-left: 3px;
+  white-space: nowrap; }
+.badge-dealer { background: var(--gold); color: #1a1200; }
+.badge-maker  { color: #fff; }
+.badge-suit-H, .badge-suit-D { background: #b71c1c; }
+.badge-suit-S, .badge-suit-C { background: #1a237e; border: 1px solid rgba(255,255,255,.3); }
+.badge-out      { background: rgba(255,255,255,.12); color: #888; font-weight: 400; }
+.badge-autoplay { background: rgba(255,152,0,.25); color: #ffcc80; border: 1px solid rgba(255,152,0,.4); }
+
+/* Bot avatar (shown in place of video for AI players) */
+.bot-avatar { display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; font-size: 2.2rem; background: rgba(255,255,255,.05);
+  border-radius: 8px; user-select: none; }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center;
+  padding: .55rem 1.1rem; border: none; border-radius: 8px; font-size: 1rem;
+  font-weight: 600; cursor: pointer; transition: filter .15s, transform .1s;
+  white-space: nowrap; touch-action: manipulation; }
+.btn:hover  { filter: brightness(1.15); }
+.btn:active { transform: scale(.96); }
+
+.btn-primary   { background: var(--gold);    color: #1a1200; }
+.btn-secondary { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.btn-success   { background: #2e7d32; color: #fff; }
+.btn-danger    { background: #c62828; color: #fff; }
+.btn-suit      { min-width: 110px; font-size: 1.05rem; letter-spacing: .02em; }
+.btn-chat      { padding: .5rem .8rem; background: var(--green-mid); color: #fff; border-radius: 6px; }
+
+.btn-S { background: #263238; color: #fff; }
+.btn-C { background: #1b5e20; color: #fff; }
+.btn-H { background: #b71c1c; color: #fff; }
+.btn-D { background: #bf360c; color: #fff; }
+.btn-leave { background: rgba(180,0,0,.55); color: #ffcdd2;
+  border: 1px solid rgba(255,100,100,.35); padding: .35rem .7rem;
+  font-size: .75rem; border-radius: 6px; }
+.btn-leave:hover { background: rgba(180,0,0,.85); }
+.btn-fullscreen { background: rgba(255,255,255,.12); color: #ddd;
+  border: 1px solid rgba(255,255,255,.25); padding: .3rem .6rem;
+  font-size: .95rem; border-radius: 6px; }
+.btn-fullscreen:hover { background: rgba(255,255,255,.22); }
+/* Dimmed appearance when video feeds are hidden */
+#btn-video-feeds.feeds-hidden { opacity: .45; }
+
+/* Hide only the local (own) camera preview when player toggles it off */
+#screen-game.hide-video .local-video-wrap { display: none; }
+
+/* ============================================================
+   Media controls (mute / camera) — sit below the local video
+   ============================================================ */
+.media-controls {
+  display: flex; justify-content: center; gap: 5px;
+  margin-top: 4px; flex-shrink: 0;
+}
+.media-btn {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  border-radius: 6px; padding: 4px 8px; font-size: .8rem; cursor: pointer;
+  color: #fff; line-height: 1.3; transition: background .15s, border-color .15s;
+  touch-action: manipulation; min-width: 36px; min-height: 30px; font-weight: 600;
+}
+.media-btn:hover  { background: rgba(255,255,255,.25); }
+.media-btn.off    { background: rgba(180,0,0,.75); border-color: #c62828; }
+
+/* ============================================================
+   Game header
+   ============================================================ */
+#game-header { display: flex; align-items: center; justify-content: space-between;
+  background: rgba(0,0,0,.55); border-bottom: 1px solid rgba(255,255,255,.1);
+  padding: .4rem 1rem; height: 52px; flex-shrink: 0; gap: .5rem; }
+
+.header-left { min-width: 90px; }
+#room-badge { font-size: .82rem; color: #aaa; letter-spacing: .08em; }
+
+.header-scores { display: flex; align-items: center; gap: 1rem; }
+.score-block { text-align: center; }
+.team-names  { font-size: .92rem; color: #aaa; white-space: nowrap; }
+.score-val   { font-size: 2.1rem; font-weight: 700; line-height: 1; }
+.team0 .score-val { color: #64b5f6; }
+.team1 .score-val { color: #ef9a9a; }
+.score-divider { font-size: .9rem; color: #666; }
+
+.header-right { display: flex; align-items: center; gap: .8rem; min-width: 160px; justify-content: flex-end; }
+.trump-display { font-size: 1.5rem; font-weight: 700; background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.25); border-radius: 10px; padding: .2rem .7rem;
+  white-space: nowrap; }
+.game-info-small { font-size: .9rem; color: #aaa; white-space: nowrap; }
+
+/* ============================================================
+   Main table layout — desktop
+   ============================================================ */
+#table {
+  flex: 1; min-height: 0; height: 0;
+  display: grid;
+  grid-template-areas:
+    ".     top    ."
+    "left  center right"
+    "bottom bottom bottom";
+  grid-template-columns: 240px 1fr 240px;
+  /* Cap rows so they never eat the center/bottom on short screens.
+     Row 3 tall enough for video+cards with flex-end breathing room above. */
+  grid-template-rows: min(190px, 22vh) 1fr min(230px, 27vh);
+  background: radial-gradient(ellipse at 50% 40%, var(--green-mid), var(--green-dark));
+  gap: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Player zones
+   ============================================================ */
+.player-zone { display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-start; gap: 4px; min-width: 0; min-height: 0; }
+
+.zone-top    { grid-area: top;    flex-direction: row; align-items: flex-start; justify-content: center; gap: 12px; }
+/* min-height:0 prevents flex containers from forcing the 1fr row to expand beyond available space */
+/* justify-content: flex-start anchors the video at the TOP of each side zone.
+   With overflow:hidden, center/start avoids the video being clipped off the top
+   when the zone is shorter than the total content (video+name+card-backs). */
+.zone-left   { grid-area: left;   justify-content: center; overflow: hidden; min-height: 0; }
+.zone-right  { grid-area: right;  justify-content: center; overflow: hidden; min-height: 0; }
+.zone-center { grid-area: center; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px; min-height: 0; }
+.zone-bottom { grid-area: bottom; display: flex; flex-direction: row;
+  /* flex-end anchors content to the bottom of the row, creating green breathing
+     space above — video and cards appear "lower" in the bottom zone */
+  align-items: flex-end; gap: 10px; padding: 6px 10px; background: rgba(0,0,0,.25);
+  border-radius: 12px 12px 0 0; min-height: 0; overflow: hidden; }
+
+/* ============================================================
+   Video feeds
+   ============================================================ */
+.player-video-wrap { position: relative; border-radius: 10px; overflow: hidden;
+  border: 2px solid rgba(255,255,255,.15); background: #111; flex-shrink: 0;
+  cursor: zoom-in; }
+/* Tap/click to expand any video to a centered overlay */
+.video-expanded {
+  position: fixed !important;
+  top: 50% !important; left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(480px, 92vw) !important;
+  height: min(360px, 52vw) !important;
+  z-index: 900 !important;
+  border: 3px solid var(--gold) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 0 40px rgba(0,0,0,.9) !important;
+  cursor: zoom-out !important;
+}
+/* Semi-transparent backdrop behind expanded video — tap it to close */
+#video-expand-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  z-index: 899; cursor: zoom-out;
+}
+#video-expand-backdrop.visible { display: block; }
+
+.zone-top  .player-video-wrap { width: min(190px, 14vw); height: min(143px, 17vh); }
+.zone-left .player-video-wrap,
+.zone-right .player-video-wrap { width: min(175px, 13vw); height: min(131px, 16vh); }
+.local-video-wrap { width: min(165px, 12vw); height: min(125px, 14vh); border-color: var(--gold) !important; }
+
+video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.video-label { position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,.6); font-size: .74rem; text-align: center;
+  padding: 1px 2px; color: #ddd; }
+
+/* ============================================================
+   Player labels
+   ============================================================ */
+.player-label { font-size: 1.02rem; color: #ddd; text-align: center;
+  max-width: 200px; word-break: break-word; }
+.player-label.active-turn { color: #ffd54f; font-weight: 700; animation: pulse .8s ease-in-out infinite; }
+
+@keyframes pulse { 0%,100% { text-shadow: 0 0 6px rgba(255,213,79,.6); } 50% { text-shadow: 0 0 14px rgba(255,213,79,1); } }
+
+/* ============================================================
+   Card backs (opponents)
+   ============================================================ */
+.card-backs { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+.card-backs.vertical { flex-direction: column; align-items: center; gap: 3px; }
+
+.card-back { width: 46px; height: 66px; border-radius: 5px;
+  background: repeating-linear-gradient(45deg, #1a237e, #1a237e 4px, #283593 4px, #283593 8px);
+  border: 2px solid rgba(255,255,255,.3); box-shadow: var(--card-shadow); flex-shrink: 0; }
+
+.card-backs.vertical .card-back { width: 66px; height: 46px;
+  background: repeating-linear-gradient(-45deg, #1a237e, #1a237e 4px, #283593 4px, #283593 8px); }
+
+/* ============================================================
+   Cards (your hand + trick)
+   ============================================================ */
+.card {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--cream); border-radius: 7px; border: 1px solid #bbb;
+  box-shadow: var(--card-shadow); user-select: none; flex-shrink: 0; cursor: default;
+  position: relative;
+}
+
+.card.hand-card  { width: 76px; height: 112px; font-size: 1.2rem;  }
+.card.trick-card { width: 78px; height: 114px; font-size: 1.25rem; }
+
+.card .c-rank { font-weight: 700; line-height: 1; }
+.card .c-suit { font-size: 1.2em; line-height: 1; }
+
+.card.S, .card.C { color: var(--black); }
+.card.H, .card.D { color: var(--red); }
+
+.card.playable {
+  border-color: #4caf50;
+  box-shadow: 0 0 10px rgba(76,175,80,.7), var(--card-shadow);
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+  touch-action: manipulation; -ms-touch-action: manipulation;
+}
+.card.playable:hover  { transform: translateY(-12px); box-shadow: 0 0 18px rgba(76,175,80,.9), 0 12px 24px rgba(0,0,0,.6); }
+.card.unplayable { opacity: .45; cursor: not-allowed; touch-action: manipulation; }
+
+/* ============================================================
+   My hand / bottom layout
+   ============================================================ */
+.bottom-left   { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.bottom-center { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+.bottom-right  { display: flex; flex-direction: column; gap: 6px; width: 220px; flex-shrink: 0; }
+.bottom-right-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+
+.my-hand { display: flex; flex-wrap: nowrap; justify-content: center; gap: 6px;
+  min-height: 115px; align-items: flex-end; overflow-x: auto; padding-bottom: 2px; }
+
+/* ============================================================
+   Actions panel
+   ============================================================ */
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px;
+  padding: 6px 4px; min-height: 44px; }
+
+.action-label { font-size: .95rem; color: #e0e0e0; }
+.action-label.waiting { color: #aaa; font-style: italic; }
+
+.go-alone-label { display: flex; align-items: center; gap: 5px; font-size: .92rem;
+  color: #ffd54f; cursor: pointer; }
+.go-alone-label input { width: 16px; height: 16px; cursor: pointer; }
+
+.sitting-out-msg { color: #888; font-style: italic; font-size: .95rem; padding: .5rem; }
+
+/* ============================================================
+   Chat toggle button (visible on mobile only by default)
+   ============================================================ */
+.chat-toggle-btn { display: none; padding: .4rem .6rem; font-size: .85rem; }
+
+/* ============================================================
+   Center / trick area
+   ============================================================ */
+
+#upcard-area { margin-bottom: 4px; }
+.upcard-label { font-size: .82rem; color: #bbb; text-align: center; margin-bottom: 3px; }
+
+#trick-area { display: flex; flex-direction: column; align-items: center; gap: 4px;
+  position: relative; }
+.trick-middle-row { display: flex; align-items: center; gap: 14px; }
+.trick-slot { width: 60px; height: 118px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; }
+.trick-card-label { font-size: .72rem; color: #ccc; text-align: center; max-width: 62px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; }
+.trick-center-label { font-size: .7rem; color: #aaa; text-align: center; width: 64px;
+  display: flex; align-items: center; justify-content: center; }
+
+.trump-badge-center { display: flex; flex-direction: column; align-items: center; gap: 1px;
+  background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.22); border-radius: 12px;
+  padding: .35rem .5rem; }
+.trump-badge-center > span { font-size: 2rem; font-weight: 700; line-height: 1; }
+.trump-badge-center > small { font-size: .58rem; color: #aaa; text-transform: uppercase;
+  letter-spacing: .07em; }
+.trump-maker-name { font-size: .65rem !important; color: #ffd54f !important;
+  text-transform: none !important; letter-spacing: 0 !important;
+  max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Suit colors on dark green background */
+.trump-badge-center .suit-S,
+.trump-badge-center .suit-C { color: #e8e8e8; }
+.trump-badge-center .suit-H { color: #ef9a9a; }
+.trump-badge-center .suit-D { color: #ff8a65; }
+
+.last-trick-msg { font-size: .88rem; color: #aaa; text-align: center; height: 1.1em; }
+
+/* ============================================================
+   Trick counter
+   ============================================================ */
+.trick-counter { font-size: .9rem; color: #ccc; text-align: center; padding: .3rem .5rem;
+  background: rgba(0,0,0,.3); border-radius: 8px; flex: 1; }
+.trick-counter .tc-row { display: flex; justify-content: space-between; gap: .5rem; margin: .2rem 0; }
+.tc-us   { color: #64b5f6; }
+.tc-them { color: #ef9a9a; }
+
+/* ============================================================
+   Chat
+   ============================================================ */
+.chat-panel { display: flex; flex-direction: column; flex: 1; background: rgba(0,0,0,.35);
+  border-radius: 10px; overflow: hidden; min-height: 0; }
+.chat-panel.hidden { display: none; }
+
+.chat-messages { display: flex; flex: 1; overflow-y: auto; padding: .4rem .6rem; font-size: .86rem;
+  flex-direction: column; gap: .2rem; min-height: 60px; }
+.chat-message { line-height: 1.4; }
+.chat-message strong { color: var(--gold); }
+.chat-system { line-height: 1.4; color: rgba(255,255,255,.45); font-style: italic; font-size: .82rem; }
+
+.chat-input-row { display: flex; gap: 4px; padding: .3rem; border-top: 1px solid rgba(255,255,255,.1); }
+.chat-input-row input { flex: 1; padding: .3rem .5rem; background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15); border-radius: 6px; color: #fff; font-size: .9rem; outline: none; }
+.chat-input-row input:focus { border-color: rgba(255,255,255,.35); }
+
+/* ============================================================
+   Overlay (hand / game results)
+   ============================================================ */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+  padding: 1rem; }
+.overlay.hidden { display: none; }
+
+.overlay-content { background: #1a1a2e; border: 1px solid rgba(255,255,255,.2);
+  border-radius: 16px; padding: 2rem 2.5rem; text-align: center;
+  max-width: 420px; width: 100%; }
+.overlay-content h2 { margin-bottom: .6rem; color: var(--gold); }
+.overlay-content p  { color: #ccc; margin-bottom: .4rem; }
+.overlay-content .score-line { font-size: 1.8rem; font-weight: 700; margin: .8rem 0; }
+
+.start-game-btn { margin-top: .8rem; width: 100%; font-size: 1rem; padding: .75rem; }
+.start-game-btn.hidden { display: none; }
+
+.btn-throw-in { background: rgba(255,152,0,.2); border: 1px solid rgba(255,152,0,.5);
+  color: #ffcc80; font-size: .92rem; padding: .35rem .8rem; border-radius: 20px;
+  cursor: pointer; transition: background .15s; }
+.btn-throw-in:hover { background: rgba(255,152,0,.35); }
+
+.btn-auto-play {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
+  color: #ccc; font-size: .78rem; padding: .28rem .6rem; border-radius: 20px;
+  cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+  white-space: nowrap; touch-action: manipulation;
+}
+.btn-auto-play:hover { background: rgba(255,255,255,.16); }
+.btn-auto-play.active {
+  background: rgba(255,152,0,.22); border-color: rgba(255,152,0,.5); color: #ffcc80;
+}
+.ap-icon  { font-size: .88rem; line-height: 1; }
+.ap-label { font-size: .75rem; }
+
+.overlay-btns { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-top: 1rem; }
+.series-status { font-size: 1rem; color: #aaa; margin: .5rem 0 .2rem; }
+
+/* ============================================================
+   Series selector (waiting room)
+   ============================================================ */
+.series-selector { display: flex; align-items: center; gap: .5rem; justify-content: center;
+  margin: .6rem 0; flex-wrap: wrap; }
+.series-sel-label { color: rgba(255,255,255,.6); font-size: .95rem; }
+.btn-series { padding: .35rem .85rem; border-radius: 20px; border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.07); color: #ccc; font-size: .92rem; cursor: pointer;
+  transition: background .15s, border-color .15s; }
+.btn-series:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.4); }
+.btn-series.active { background: var(--gold); border-color: var(--gold); color: #1a1a2e; font-weight: 600; }
+
+/* Series record badge in header */
+.series-record { font-size: .78rem; color: rgba(255,255,255,.6); background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15); border-radius: 10px; padding: .15rem .55rem;
+  margin-right: .4rem; white-space: nowrap; }
+
+/* ============================================================
+   Toast
+   ============================================================ */
+/* Version badge — fixed bottom-left, very subtle */
+.version-badge { position: fixed; bottom: 4px; left: 6px; font-size: .75rem;
+  color: rgba(255,255,255,.25); pointer-events: none; z-index: 50;
+  letter-spacing: .04em; user-select: none; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+  background: #222; color: #fff; padding: .6rem 1.2rem; border-radius: 30px;
+  font-size: .85rem; opacity: 0; transition: opacity .3s, transform .3s;
+  pointer-events: none; z-index: 200; white-space: nowrap;
+  border: 1px solid rgba(255,255,255,.15); max-width: 90vw; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.error   { border-color: var(--red); color: #ff8a80; }
+.toast.warning { border-color: #f57c00; color: #ffcc80; }
+.toast.success { border-color: #388e3c; color: #a5d6a7; }
+
+/* ============================================================
+   Suit colours
+   ============================================================ */
+.suit-S, .suit-C { color: var(--black); }
+.suit-H, .suit-D { color: var(--red); }
+.trump-display .suit-S,
+.trump-display .suit-C { color: #e0e0e0; }
+.trump-display .suit-H { color: #ef9a9a; }
+.trump-display .suit-D { color: #ff8a65; }
+
+/* ============================================================
+   Turn highlight ring
+   ============================================================ */
+.zone-top.is-turn    .player-video-wrap,
+.zone-left.is-turn   .player-video-wrap,
+.zone-right.is-turn  .player-video-wrap,
+.zone-bottom.is-turn .local-video-wrap {
+  border-color: #ffd54f;
+  box-shadow: 0 0 12px rgba(255,213,79,.7);
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
+
+/* ============================================================
+   iPad / Tablet  (768px – 1024px)
+   ============================================================ */
+@media (max-width: 1024px) and (min-width: 600px) {
+  #table {
+    grid-template-columns: 170px 1fr 170px;
+    grid-template-rows: min(160px, 22vh) 1fr min(215px, 30vh);
+  }
+
+  /* Match phone breakpoint: allow content to be visible so nothing is clipped */
+  .zone-left, .zone-right, .zone-bottom { overflow: visible; }
+
+  .zone-top  .player-video-wrap { width: min(140px, 13vw); height: min(105px, 16vh); }
+  .zone-left .player-video-wrap,
+  .zone-right .player-video-wrap { width: min(130px, 12vw); height: min(98px, 14vh); }
+  .local-video-wrap { width: min(140px, 13vw); height: min(105px, 16vh); }
+
+  .card.hand-card  { width: 70px; height: 103px; }
+  .card.trick-card { width: 50px; height: 73px; }
+  .card-back       { width: 36px; height: 52px; }
+
+  .bottom-right { width: 180px; }
+}
+
+/* ============================================================
+   Phone  (< 600px)
+   ============================================================ */
+@media (max-width: 599px) {
+  /* Fixed viewport — no page scroll in a card game.
+     Everything must fit in 100dvh. */
+  html, body { overflow: hidden; height: 100dvh; }
+  .screen     { height: 100dvh; overflow: hidden; }
+  #screen-game { height: 100dvh; overflow: hidden; }
+
+  /* Header — compact, no sticky needed (page doesn't scroll) */
+  #game-header {
+    height: 44px; min-height: unset; padding: .25rem .6rem;
+    flex-wrap: nowrap; gap: .2rem;
+  }
+  .header-left { min-width: unset; }
+  .header-right { min-width: unset; gap: .4rem; }
+  .team-names      { display: none; }
+  .game-info-small { font-size: .72rem; }
+  .score-val       { font-size: 1.4rem; }
+
+  /* Table — fills the space left after the 44px header.
+     Middle row uses minmax so it never collapses below 120px even
+     when bidding buttons make the bottom row unusually tall. */
+  #table {
+    flex: 1; height: 0; min-height: 0;  /* fill parent flex space, matching desktop pattern */
+    display: grid;
+    grid-template-areas:
+      "top top top"
+      "left center right"
+      "bottom bottom bottom";
+    grid-template-columns: 68px 1fr 68px;
+    grid-template-rows: auto minmax(120px, 1fr) auto;
+    gap: 4px; padding: 4px;
+    overflow: visible;
+  }
+
+  /* Side zones: allow content to be visible (don't clip card-backs) */
+  .zone-left, .zone-right { overflow: visible; }
+
+  /* Bottom zone: overflow visible so hand cards are never clipped */
+  .zone-bottom { overflow: visible; }
+
+  /* Video tiles — slightly smaller than iPad to fit the fixed viewport budget */
+  .zone-top   .player-video-wrap { width: min(130px, 13vw); height: min(90px, 14vh); }
+  .zone-left  .player-video-wrap,
+  .zone-right .player-video-wrap { display: block; width: min(130px, 13vw); height: min(90px, 14vh); }
+  .zone-top .player-label { font-size: .7rem; max-width: min(140px, 13vw); }
+
+  .zone-left, .zone-right { justify-content: center; gap: 3px; }
+  .zone-left  .player-label,
+  .zone-right .player-label { font-size: .65rem; max-width: min(130px, 12vw); }
+
+  /* Hide self-view in game screen — reclaims ~105px in the bottom zone.
+     The waiting room preview (.wmc-preview-wrap / #video-preview) is unaffected. */
+  #screen-game .local-video-wrap { display: none; }
+
+  /* Bottom zone — vertical stack; restore align-items:stretch so column
+     children fill full width (base uses flex-end for desktop row layout) */
+  .zone-bottom { flex-direction: column; align-items: stretch; padding: 5px 6px 4px; gap: 4px; }
+  .bottom-left {
+    flex-direction: row; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.08); padding-bottom: 4px;
+  }
+  /* flex-start so actions+cards appear at top of bottom-center, not pushed to bottom */
+  .bottom-center { width: 100%; justify-content: flex-start; }
+  .bottom-right  { width: 100%; }
+  .bottom-right-top { display: flex; }
+
+  /* Chat toggle visible on mobile */
+  .chat-toggle-btn { display: inline-flex; flex-shrink: 0; }
+  .chat-panel.mobile-hidden { display: none; }
+
+  /* Cards: vw-based so they fit regardless of system text zoom.
+     clamp(min, preferred, max) — scales with screen width.      */
+  .card.hand-card  {
+    width: clamp(40px, 12vw, 54px);
+    height: clamp(58px, 17vw, 78px);
+    font-size: clamp(.82rem, 3.5vw, 1rem);
+  }
+  .card.trick-card {
+    width: clamp(34px, 10vw, 44px);
+    height: clamp(50px, 14vw, 64px);
+    font-size: clamp(.75rem, 3vw, .92rem);
+  }
+  .card-back { width: clamp(22px, 6vw, 28px); height: clamp(30px, 8.5vw, 40px); }
+  /* Vertical card-backs in side zones: keep narrow height so 5 stacked cards
+     don't push the middle grid row too tall on small phones */
+  .card-backs.vertical .card-back { width: clamp(30px, 8.5vw, 40px); height: clamp(16px, 4.5vw, 22px); }
+
+  /* Trick area — revert slot height to original so zone-center stays compact */
+  .trick-slot { width: clamp(34px, 10vw, 44px); height: clamp(50px, 14vw, 64px); }
+  .trick-middle-row { gap: 6px; }
+  /* Hide player-name labels under trick cards — too small to read and hurts layout */
+  .trick-card-label { display: none; }
+
+  /* Hand */
+  .my-hand { gap: 4px; min-height: clamp(58px, 16vw, 78px); justify-content: center; }
+
+  /* Actions — compact on phone */
+  .actions { gap: 4px; padding: 3px 2px; min-height: 34px; }
+  .action-label { font-size: .85rem; }
+  /* Auto-play button — icon only on phone to save space */
+  .ap-label { display: none; }
+  .btn-auto-play { padding: .25rem .42rem; }
+  .btn-suit { min-width: 68px; font-size: .85rem; padding: .36rem .4rem; }
+  .btn      { padding: .38rem .65rem; font-size: .86rem; }
+
+  /* Overlay */
+  .overlay-content { padding: 1.4rem 1.1rem; border-radius: 12px; }
+  .overlay-content .score-line { font-size: 1.4rem; }
+
+  /* Trick counter */
+  .trick-counter { font-size: .82rem; padding: .2rem .4rem; }
+
+  /* Waiting room */
+  .waiting-container h2 { font-size: 1.2rem; }
+  .share-link { flex-direction: column; }
+}
+
+/* ============================================================
+   Phone landscape (short + wide)
+   ============================================================ */
+@media (max-width: 900px) and (max-height: 500px) {
+  #table {
+    grid-template-columns: 60px 1fr 60px;
+    /* Explicit heights so zone-bottom always gets space for hand cards.
+       1fr gives all remaining height to the middle player zones. */
+    grid-template-rows: 70px 1fr 110px;
+  }
+  /* Side zones: visible so card-backs aren't clipped in narrow landscape columns */
+  .zone-left, .zone-right { overflow: visible; }
+  /* Bottom zone: visible so hand cards show; 110px row is enough for hand + actions */
+  .zone-bottom { overflow: visible; }
+  /* Chat panel hidden in landscape — no room for it */
+  .chat-panel { display: none; }
+  .chat-toggle-btn { display: none; }
+
+  .zone-top .player-video-wrap,
+  .local-video-wrap { width: 72px; height: 54px; }
+  .card.hand-card { width: 44px; height: 65px; font-size: .88rem; }
+  .my-hand { min-height: 68px; }
+  .actions { min-height: 32px; }
+  #game-header { min-height: 38px; }
+}
+
+/* ============================================================
+   Large screens (≥ 1400px) — bigger cards and video tiles
+   ============================================================ */
+@media (min-width: 1400px) {
+  #table {
+    grid-template-columns: 320px 1fr 320px;
+    /* vh cap prevents rows from squeezing center/bottom on short screens */
+    grid-template-rows: min(265px, 25vh) 1fr min(345px, 38vh);
+  }
+  .zone-top  .player-video-wrap { width: min(260px, 17vw); height: min(195px, 22vh); }
+  .zone-left .player-video-wrap,
+  .zone-right .player-video-wrap { width: min(245px, 16vw); height: min(184px, 20vh); }
+  .local-video-wrap { width: min(260px, 17vw); height: min(195px, 22vh); }
+
+  .card.hand-card  { width: 96px;  height: 141px; font-size: 1.4rem; }
+  .card.trick-card { width: 98px;  height: 143px; font-size: 1.45rem; }
+  .card-back       { width: 60px; height: 88px; }
+  .card-backs.vertical .card-back { width: 88px; height: 60px; }
+  .trick-slot { width: 98px; height: 158px; }
+  .my-hand { gap: 11px; min-height: 130px; }
+  .player-label { font-size: 1.15rem; max-width: 280px; }
+  .score-val { font-size: 2.4rem; }
+  .team-names { font-size: 1rem; }
+  .game-info-small { font-size: .96rem; }
+}
+
+/* ============================================================
+   Extra-large screens (≥ 1800px)
+   ============================================================ */
+@media (min-width: 1800px) {
+  #table {
+    grid-template-columns: 380px 1fr 380px;
+    grid-template-rows: min(300px, 25vh) 1fr min(400px, 38vh);
+  }
+  .zone-top  .player-video-wrap { width: min(310px, 17vw); height: min(233px, 22vh); }
+  .zone-left .player-video-wrap,
+  .zone-right .player-video-wrap { width: min(290px, 16vw); height: min(218px, 20vh); }
+  .local-video-wrap { width: min(310px, 17vw); height: min(233px, 22vh); }
+
+  .card.hand-card  { width: 108px; height: 158px; font-size: 1.6rem; }
+  .card.trick-card { width: 114px; height: 166px; font-size: 1.7rem; }
+  .card-back       { width: 70px;  height: 102px; }
+  .card-backs.vertical .card-back { width: 102px; height: 70px; }
+  .trick-slot { width: 114px; height: 180px; }
+  .my-hand { gap: 13px; min-height: 145px; }
+  .player-label { font-size: 1.28rem; }
+}

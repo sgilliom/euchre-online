@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHD Inc. Actuator Simulator — Pick &amp; Place</title>
+  <link rel="stylesheet" href="/css/phd-simulator.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HEADER ══════════════════════════════════ -->
+<header class="sim-header">
+  <div class="brand">
+    <svg viewBox="0 0 36 36" fill="none">
+      <rect width="36" height="36" rx="6" fill="#0072CE"/>
+      <text x="5" y="26" font-family="Arial Black,sans-serif" font-size="18" font-weight="900" fill="white">PHD</text>
+    </svg>
+    <div>
+      <h1>Actuator Simulator</h1>
+      <div class="subtitle">Pick &amp; Place Configuration &amp; Cycle Visualizer</div>
+    </div>
+  </div>
+  <button class="btn-back" id="btn-back">&#8592; Back</button>
+</header>
+
+<!-- ═══════════════════════════════════════ PROGRESS ════════════════════════════════ -->
+<div class="progress-bar">
+  <div class="step-indicator">
+    <div class="step-item active" id="step-ind-1">
+      <div class="step-num">1</div>
+      <div class="step-label">Scenario</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" id="step-ind-2">
+      <div class="step-num">2</div>
+      <div class="step-label">Configure</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" id="step-ind-3">
+      <div class="step-num">3</div>
+      <div class="step-label">Simulate</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ SCREEN 1 — SCENARIO ═════════════════════ -->
+<div class="screen active" id="screen-scenario">
+  <div class="screen-inner">
+    <div class="section-header">
+      <div class="step-badge">Step 1 of 3</div>
+      <h2>Choose Your Application Scenario</h2>
+      <p>Select the industry or task that best describes your pick &amp; place application.</p>
+    </div>
+
+    <div class="card-grid cols-3" id="scenario-grid">
+
+      <div class="sel-card" data-id="electronics" onclick="selectScenario(this)">
+        <div class="card-icon">🔌</div>
+        <div class="card-title">PCB &amp; Electronics Assembly</div>
+        <div class="card-desc">Placing small, light components onto circuit boards or trays with high precision and repeatability.</div>
+        <div class="card-tags">
+          <span class="tag precise">High Precision</span>
+          <span class="tag fast">Fast Cycle</span>
+          <span class="tag">Light Load</span>
+        </div>
+        <div class="card-spec">
+          <div class="spec-item"><span class="spec-label">Typical load:</span><br><span class="spec-val">5–500 g</span></div>
+          <div class="spec-item"><span class="spec-label">Cycle target:</span><br><span class="spec-val">&lt;1.5 s</span></div>
+        </div>
+      </div>
+
+      <div class="sel-card" data-id="packaging" onclick="selectScenario(this)">
+        <div class="card-icon">📦</div>
+        <div class="card-title">Packaging &amp; Palletizing</div>
+        <div class="card-desc">Moving boxed goods, bottles, or pouches between conveyors and pallets at moderate to high speed.</div>
+        <div class="card-tags">
+          <span class="tag fast">High Throughput</span>
+          <span class="tag">Medium Load</span>
+          <span class="tag">Long Stroke</span>
+        </div>
+        <div class="card-spec">
+          <div class="spec-item"><span class="spec-label">Typical load:</span><br><span class="spec-val">0.5–5 kg</span></div>
+          <div class="spec-item"><span class="spec-label">Cycle target:</span><br><span class="spec-val">&lt;2.5 s</span></div>
+        </div>
+      </div>
+
+      <div class="sel-card" data-id="automotive" onclick="selectScenario(this)">
+        <div class="card-icon">🚗</div>
+        <div class="card-title">Automotive Parts Handling</div>
+        <div class="card-desc">Transferring stamped metal brackets, castings, or machined parts between fixtures and machining centers.</div>
+        <div class="card-tags">
+          <span class="tag heavy">Heavy Duty</span>
+          <span class="tag">Robust</span>
+          <span class="tag">High Force</span>
+        </div>
+        <div class="card-spec">
+          <div class="spec-item"><span class="spec-label">Typical load:</span><br><span class="spec-val">2–15 kg</span></div>
+          <div class="spec-item"><span class="spec-label">Cycle target:</span><br><span class="spec-val">&lt;4 s</span></div>
+        </div>
+      </div>
+
+      <div class="sel-card" data-id="medical" onclick="selectScenario(this)">
+        <div class="card-icon">🏥</div>
+        <div class="card-title">Medical Device Assembly</div>
+        <div class="card-desc">Handling syringes, vials, or implants in clean-room environments where contamination control is critical.</div>
+        <div class="card-tags">
+          <span class="tag hygiene">Clean Room</span>
+          <span class="tag precise">Precision</span>
+          <span class="tag electric">Electric Preferred</span>
+        </div>
+        <div class="card-spec">
+          <div class="spec-item"><span class="spec-label">Typical load:</span><br><span class="spec-val">10–500 g</span></div>
+          <div class="spec-item"><span class="spec-label">Cycle target:</span><br><span class="spec-val">&lt;2 s</span></div>
+        </div>
+      </div>
+
+      <div class="sel-card" data-id="food" onclick="selectScenario(this)">
+        <div class="card-icon">🍽️</div>
+        <div class="card-title">Food &amp; Beverage Handling</div>
+        <div class="card-desc">Moving food containers, bottles, or sealed packs using hygienic, washdown-rated components.</div>
+        <div class="card-tags">
+          <span class="tag hygiene">Washdown</span>
+          <span class="tag">Stainless Steel</span>
+          <span class="tag fast">Moderate Speed</span>
+        </div>
+        <div class="card-spec">
+          <div class="spec-item"><span class="spec-label">Typical load:</span><br><span class="spec-val">0.2–3 kg</span></div>
+          <div class="spec-item"><span class="spec-label">Cycle target:</span><br><span class="spec-val">&lt;3 s</span></div>
+        </div>
+      </div>
+
+      <div class="sel-card" data-id="general" onclick="selectScenario(this)">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">General Industrial Transfer</div>
+        <div class="card-desc">Custom or general-purpose pick &amp; place for machine tending, bin picking, or test &amp; inspection stations.</div>
+        <div class="card-tags">
+          <span class="tag">Flexible</span>
+          <span class="tag">Custom Load</span>
+          <span class="tag">Any Speed</span>
+        </div>
+        <div class="card-spec">
+          <div class="spec-item"><span class="spec-label">Typical load:</span><br><span class="spec-val">Variable</span></div>
+          <div class="spec-item"><span class="spec-label">Cycle target:</span><br><span class="spec-val">Custom</span></div>
+        </div>
+      </div>
+
+    </div><!-- /card-grid -->
+
+    <div class="btn-row">
+      <button class="btn btn-orange" id="btn-scenario-next" disabled onclick="goToConfigure()">
+        Configure Actuators &#8594;
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ SCREEN 2 — CONFIGURE ════════════════════ -->
+<div class="screen" id="screen-configure">
+  <div class="screen-inner">
+    <div class="section-header">
+      <div class="step-badge">Step 2 of 3</div>
+      <h2>Configure Your System</h2>
+      <p id="config-subtitle">Select your object type, motion axis setup, and actuator components.</p>
+    </div>
+
+    <div class="config-layout">
+      <!-- Left: selections -->
+      <div class="config-sections">
+
+        <!-- Axis Mode -->
+        <div>
+          <div class="config-section-title"><span>🔩</span> System Architecture</div>
+          <div class="axis-mode-row">
+            <button class="axis-mode-btn selected" data-mode="separate" onclick="selectAxisMode(this)">
+              <div class="mode-icon">↕️↔️</div>
+              <div class="mode-name">Separate Axes</div>
+              <div class="mode-desc">Independent vertical &amp; horizontal actuators — maximum flexibility and stroke customization.</div>
+            </button>
+            <button class="axis-mode-btn" data-mode="dual" onclick="selectAxisMode(this)">
+              <div class="mode-icon">🔀</div>
+              <div class="mode-name">Dual-Axis Unit</div>
+              <div class="mode-desc">Integrated X-Y or Z-X slide unit — compact footprint, pre-aligned, fast installation.</div>
+            </button>
+            <button class="axis-mode-btn" data-mode="multi" onclick="selectAxisMode(this)">
+              <div class="mode-icon">🤖</div>
+              <div class="mode-name">Multi-Axis Gantry</div>
+              <div class="mode-desc">3-axis or more system for complex paths, longer reach, or multi-station transfers.</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Object Type -->
+        <div id="obj-section">
+          <div class="config-section-title"><span>📦</span> Object to Pick</div>
+          <div class="card-grid cols-5" id="object-grid">
+            <!-- populated by JS -->
+          </div>
+          <div class="obj-weight-row">
+            <label>Payload weight:</label>
+            <input type="range" id="weight-slider" min="0" max="100" value="20" oninput="updateWeight(this.value)"/>
+            <span class="weight-display" id="weight-display">0.5 kg</span>
+          </div>
+        </div>
+
+        <!-- Gripper -->
+        <div>
+          <div class="config-section-title"><span>✊</span> Gripper Selection</div>
+          <div class="card-grid cols-3" id="gripper-grid">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <!-- Vertical Actuator -->
+        <div id="vert-section">
+          <div class="config-section-title"><span>↕️</span> Vertical Actuator</div>
+          <div class="card-grid cols-3" id="vert-grid">
+            <!-- populated by JS -->
+          </div>
+          <div class="stroke-selector">
+            <div class="stroke-selector-label">↕️ Vertical Stroke Length:</div>
+            <div class="stroke-btns" id="vert-stroke-btns">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Actuator -->
+        <div id="horiz-section">
+          <div class="config-section-title"><span>↔️</span> Horizontal Actuator</div>
+          <div class="card-grid cols-3" id="horiz-grid">
+            <!-- populated by JS -->
+          </div>
+          <div class="stroke-selector">
+            <div class="stroke-selector-label">↔️ Horizontal Stroke Length:</div>
+            <div class="stroke-btns" id="horiz-stroke-btns">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual/Multi axis hidden until selected -->
+        <div id="combo-section" style="display:none">
+          <div class="config-section-title"><span>🔀</span> Integrated Axis Unit</div>
+          <div class="card-grid cols-3" id="combo-grid">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+      </div><!-- /config-sections -->
+
+      <!-- Right: live summary -->
+      <div>
+        <div class="summary-panel">
+          <h3>&#128203; Configuration Summary</h3>
+          <div class="summary-row">
+            <span class="summary-key">Scenario</span>
+            <span class="summary-val" id="sum-scenario">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-key">Object</span>
+            <span class="summary-val empty" id="sum-object">not selected</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-key">Payload</span>
+            <span class="summary-val" id="sum-weight">0.5 kg</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-key">Architecture</span>
+            <span class="summary-val" id="sum-arch">Separate Axes</span>
+          </div>
+          <hr class="summary-divider"/>
+          <div class="summary-row">
+            <span class="summary-key">Gripper</span>
+            <span class="summary-val empty" id="sum-gripper">not selected</span>
+          </div>
+          <div class="summary-row" id="sum-vert-row">
+            <span class="summary-key">Vertical</span>
+            <span class="summary-val empty" id="sum-vert">not selected</span>
+          </div>
+          <div class="summary-row" id="sum-vert-stroke-row">
+            <span class="summary-key">Vert. Stroke</span>
+            <span class="summary-val" id="sum-vert-stroke">100 mm</span>
+          </div>
+          <div class="summary-row" id="sum-horiz-row">
+            <span class="summary-key">Horizontal</span>
+            <span class="summary-val empty" id="sum-horiz">not selected</span>
+          </div>
+          <div class="summary-row" id="sum-horiz-stroke-row">
+            <span class="summary-key">Horiz. Stroke</span>
+            <span class="summary-val" id="sum-horiz-stroke">300 mm</span>
+          </div>
+          <div class="summary-row" id="sum-combo-row" style="display:none">
+            <span class="summary-key">Axis Unit</span>
+            <span class="summary-val empty" id="sum-combo">not selected</span>
+          </div>
+          <hr class="summary-divider"/>
+          <div class="cycle-preview">
+            <div class="cycle-label">Estimated Cycle Time</div>
+            <div class="cycle-time-val" id="sum-cycle">—<span> s</span></div>
+            <div class="cycle-pph" id="sum-pph"></div>
+          </div>
+          <div class="info-note" id="sum-note" style="display:none"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top:1rem; flex-direction:column; gap:.6rem; align-items:stretch;">
+          <button class="btn btn-orange" id="btn-run-sim" disabled onclick="goToSimulate()" style="justify-content:center;">
+            ▶ Run Simulation
+          </button>
+          <button class="btn btn-ghost" onclick="resetConfig()" style="justify-content:center;">Reset Selections</button>
+        </div>
+      </div>
+
+    </div><!-- /config-layout -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ SCREEN 3 — SIMULATE ═════════════════════ -->
+<div class="screen" id="screen-simulate">
+  <div class="screen-inner">
+    <div class="section-header">
+      <div class="step-badge">Step 3 of 3</div>
+      <h2>Pick &amp; Place Simulation</h2>
+      <p>Watch your configured system in action. Adjust speed to compare actuator options.</p>
+    </div>
+
+    <div class="sim-layout">
+
+      <!-- Canvas + controls -->
+      <div>
+        <div class="sim-canvas-wrap">
+          <h3>&#127916; Live Simulation</h3>
+          <canvas id="sim-canvas" width="640" height="340"></canvas>
+          <div class="sim-controls">
+            <button class="btn btn-primary" id="btn-play-pause" onclick="togglePlayPause()">&#9646;&#9646; Pause</button>
+            <button class="btn btn-ghost" onclick="restartSim()">↺ Restart</button>
+            <div class="speed-control">
+              Speed:
+              <select id="speed-select" onchange="setSpeed(this.value)">
+                <option value="0.5">0.5× Slow</option>
+                <option value="1" selected>1× Normal</option>
+                <option value="2">2× Fast</option>
+                <option value="4">4× Faster</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Phase timeline -->
+          <div class="phase-bar" id="phase-bar">
+            <!-- populated by JS -->
+          </div>
+          <div style="font-size:.72rem; color:#6B7B99; margin-top:.3rem;" id="phase-label-text">
+            Phase: Initializing…
+          </div>
+        </div>
+
+        <!-- Reconfigure banner -->
+        <div class="compare-bar" style="margin-top:1rem;">
+          <div>
+            <h4>&#9881; Want to compare configurations?</h4>
+            <p>Go back to Step 2 and change actuators — all timing adjusts automatically.</p>
+          </div>
+          <button class="btn" style="background:rgba(255,255,255,.2);color:white;border:1px solid rgba(255,255,255,.4);"
+                  onclick="goToConfigure()">&#8592; Reconfigure</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-panel">
+
+        <div class="stats-card">
+          <h4>&#9201; Cycle Performance</h4>
+          <div class="big-stat">
+            <div class="big-stat-val" id="stat-cycle">—</div>
+            <div class="big-stat-unit">s / cycle</div>
+          </div>
+          <div class="stat-sub" id="stat-pph">— parts / hour</div>
+          <hr style="border:none;border-top:1px solid #E8ECF2;margin:.8rem 0"/>
+          <div class="phase-breakdown" id="phase-breakdown">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <h4>&#128270; Selected Components</h4>
+          <div class="selected-summary" id="selected-summary">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <div class="stats-card" id="sim-note-card" style="display:none">
+          <h4>&#128161; PHD Sizing Note</h4>
+          <div id="sim-note-text" style="font-size:.82rem;color:#2D3A50;line-height:1.6;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/phd-simulator.js"></script>
+</body>
+</html>

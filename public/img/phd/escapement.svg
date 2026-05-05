@@ -1,0 +1,57 @@
+<svg viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg" font-family="monospace">
+  <rect width="480" height="220" fill="#0f172a" rx="8"/>
+  <text x="240" y="20" fill="#6366f1" font-size="11" text-anchor="middle" font-weight="bold">PARTS FEEDING — VIBRATORY BOWL TO ASSEMBLY STATION</text>
+
+  <!-- vibratory bowl feeder (left) -->
+  <ellipse cx="90" cy="130" rx="55" ry="30" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <ellipse cx="90" cy="125" rx="45" ry="22" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <!-- parts in bowl -->
+  <circle cx="75" cy="120" r="5" fill="#f59e0b"/>
+  <circle cx="95" cy="115" r="5" fill="#f59e0b"/>
+  <circle cx="85" cy="130" r="5" fill="#f59e0b"/>
+  <circle cx="105" cy="125" r="5" fill="#f59e0b"/>
+  <text x="90" y="170" fill="#94a3b8" font-size="9" text-anchor="middle">VIBRATORY</text>
+  <text x="90" y="181" fill="#94a3b8" font-size="9" text-anchor="middle">BOWL FEEDER</text>
+
+  <!-- chute from bowl to escapement -->
+  <rect x="140" y="118" width="80" height="16" fill="#1e293b" stroke="#475569" stroke-width="1.5" rx="2"/>
+  <!-- parts in chute (queued) -->
+  <circle cx="160" cy="126" r="5" fill="#f59e0b"/>
+  <circle cx="175" cy="126" r="5" fill="#f59e0b"/>
+  <circle cx="190" cy="126" r="5" fill="#f59e0b"/>
+  <circle cx="205" cy="126" r="5" fill="#f59e0b"/>
+  <text x="180" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">PART QUEUE</text>
+
+  <!-- escapement body -->
+  <rect x="220" y="100" width="50" height="55" fill="#1e3a5f" stroke="#6366f1" stroke-width="2" rx="4"/>
+  <text x="245" y="186" fill="#22c55e" font-size="9" text-anchor="middle">ESCAPEMENT</text>
+  <!-- escapement rods -->
+  <rect x="228" y="115" width="8" height="25" fill="#6366f1" rx="2"/>
+  <rect x="253" y="122" width="8" height="25" fill="#475569" rx="2"/>
+  <!-- released part -->
+  <circle cx="245" cy="145" r="6" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+  <!-- arrow showing release -->
+  <line x1="245" y1="155" x2="245" y2="168" stroke="#22c55e" stroke-width="2"/>
+  <polygon points="245,172 241,163 249,163" fill="#22c55e"/>
+
+  <!-- drop chute down to assembly -->
+  <rect x="237" y="172" width="16" height="30" fill="#1e293b" stroke="#334155" stroke-width="1" rx="2"/>
+
+  <!-- assembly station (right) -->
+  <rect x="310" y="90" width="130" height="100" fill="#1e293b" stroke="#475569" stroke-width="1.5" rx="6"/>
+  <rect x="330" y="155" width="90" height="20" fill="#334155" rx="3"/>
+  <circle cx="375" cy="140" r="12" fill="#1e3a5f" stroke="#6366f1" stroke-width="2"/>
+  <text x="375" y="144" fill="#6366f1" font-size="9" text-anchor="middle">NEST</text>
+  <!-- part placed -->
+  <circle cx="375" cy="140" r="6" fill="#22c55e"/>
+  <text x="375" y="105" fill="#94a3b8" font-size="9" text-anchor="middle">ASSEMBLY</text>
+  <text x="375" y="116" fill="#94a3b8" font-size="9" text-anchor="middle">STATION</text>
+
+  <!-- arrow from escapement to assembly -->
+  <line x1="272" y1="126" x2="308" y2="126" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <polygon points="310,126 302,122 302,130" fill="#6366f1"/>
+
+  <!-- one-at-a-time label -->
+  <text x="290" y="115" fill="#f59e0b" font-size="8" text-anchor="middle">ONE AT</text>
+  <text x="290" y="125" fill="#f59e0b" font-size="8" text-anchor="middle">A TIME</text>
+</svg>
