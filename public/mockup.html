@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euchre iPhone Layout Mockup</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #1a1a2e;
+  color: #fff;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+h1 { text-align: center; color: #f0c040; font-size: 1.3rem; margin-bottom: 6px; }
+.subtitle { text-align: center; color: #aaa; font-size: .85rem; margin-bottom: 28px; }
+
+.phones-row {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* ── Phone shell ── */
+.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.phone-label { font-size: 1rem; font-weight: bold; color: #f0c040; }
+.phone-sublabel { font-size: .78rem; color: #aaa; text-align: center; max-width: 200px; }
+
+.phone {
+  width: 200px;
+  height: 400px;
+  background: #111;
+  border-radius: 28px;
+  border: 3px solid #444;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,.7);
+}
+/* notch */
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 60px; height: 14px;
+  background: #111;
+  border-radius: 0 0 10px 10px;
+  z-index: 10;
+}
+.phone-screen {
+  width: 100%; height: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Shared colours ── */
+:root {
+  --green-dark: #0d3318;
+  --green-mid:  #1a5c2a;
+  --green-felt: #1e6b30;
+  --gold: #f0c040;
+  --card-bg: #fff;
+  --card-face: #f7f3e8;
+  --blue-back: #1a3a8a;
+}
+
+/* ══════════════════════════════════════════════════
+   CURRENT layout  (cramped 3-column grid)
+══════════════════════════════════════════════════ */
+.current-screen {
+  background: var(--green-dark);
+  font-size: 7px;
+}
+
+.cur-header {
+  background: rgba(0,0,0,.6);
+  padding: 3px 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.cur-header .room { color: #aaa; font-size: 6px; }
+.cur-header .score { color: var(--gold); font-weight: bold; font-size: 8px; }
+
+.cur-table {
+  flex: 1;
+  display: grid;
+  grid-template-areas:
+    ".    top   ."
+    "left ctr   right"
+    "bot  bot   bot";
+  grid-template-columns: 52px 1fr 52px;
+  grid-template-rows: 80px 1fr 110px;
+  background: radial-gradient(ellipse at 50% 40%, var(--green-mid), var(--green-dark));
+  gap: 2px;
+  padding: 2px;
+  overflow: hidden;
+}
+
+/* top zone */
+.cur-top {
+  grid-area: top;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 6px;
+}
+.vid-box {
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  background: #111;
+  flex-shrink: 0;
+}
+.cur-top .vid-box { width: 48px; height: 36px; }
+.player-chip {
+  background: rgba(0,0,0,.5);
+  border-radius: 6px;
+  padding: 1px 4px;
+  font-size: 6px;
+  color: #90ee90;
+  white-space: nowrap;
+}
+.card-back-h { /* horizontal card back */
+  width: 10px; height: 14px;
+  background: var(--blue-back);
+  border-radius: 1px;
+  border: 1px solid #4a6aaa;
+  display: inline-block;
+}
+.cur-top .backs { display: flex; gap: 1px; margin-top: 1px; }
+
+/* side zones */
+.cur-left  { grid-area: left;  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; overflow: hidden; }
+.cur-right { grid-area: right; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; overflow: hidden; }
+.cur-left .vid-box,
+.cur-right .vid-box { width: 44px; height: 33px; }
+.cur-left .backs,
+.cur-right .backs { display: flex; gap: 1px; flex-wrap: wrap; justify-content: center; }
+.side-label { font-size: 5.5px; color: #90ee90; text-align: center; }
+
+/* center zone */
+.cur-ctr {
+  grid-area: ctr;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.upcard {
+  width: 18px; height: 26px;
+  background: var(--card-face);
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  color: #cc0000;
+  font-weight: bold;
+}
+.trump-badge {
+  background: rgba(0,0,0,.6);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 6px;
+  color: var(--gold);
+}
+.trick-area-mini {
+  display: grid;
+  grid-template-areas: ". t ." "l . r" ". b .";
+  gap: 1px;
+  width: 44px;
+}
+.trick-slot-mini {
+  width: 14px; height: 20px;
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trick-slot-mini.has-card { background: var(--card-face); border-color: transparent; font-size: 6px; color: #333; }
+
+/* bottom zone */
+.cur-bot {
+  grid-area: bot;
+  background: rgba(0,0,0,.3);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 3px;
+  overflow: hidden;
+}
+.cur-bot .vid-box { width: 36px; height: 28px; flex-shrink: 0; }
+.my-hand-mini {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  align-items: flex-end;
+}
+.hand-card-mini {
+  width: 16px; height: 28px;
+  background: var(--card-face);
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  font-size: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+.hand-card-mini.red { color: #cc0000; }
+.bid-mini {
+  background: rgba(0,0,0,.7);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  padding: 2px 3px;
+  font-size: 5.5px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.bid-btn-mini {
+  background: var(--gold);
+  color: #000;
+  border-radius: 2px;
+  padding: 1px 3px;
+  font-size: 5px;
+  font-weight: bold;
+}
+
+/* problem indicators */
+.problem-arrow {
+  position: absolute;
+  color: #ff4444;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+
+/* ══════════════════════════════════════════════════
+   PROPOSED layout  (single-column portrait stack)
+══════════════════════════════════════════════════ */
+.proposed-screen {
+  background: var(--green-dark);
+  display: flex;
+  flex-direction: column;
+  font-size: 7px;
+}
+
+/* Score/status header bar */
+.prop-header {
+  background: rgba(0,0,0,.7);
+  padding: 4px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.prop-header .score { color: var(--gold); font-weight: bold; font-size: 8px; }
+.prop-header .trump { color: #ff6666; font-size: 8px; }
+.prop-header .room  { color: #aaa; font-size: 6px; }
+
+/* Opponents strip */
+.prop-opponents {
+  background: rgba(0,0,0,.35);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  padding: 4px 6px;
+  gap: 4px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.opp-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+.opp-avatar {
+  width: 32px; height: 24px;
+  background: #111;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  position: relative;
+}
+.opp-avatar.is-turn { border-color: var(--gold); }
+.opp-avatar .turn-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 5px;
+  border: 1.5px solid var(--gold);
+  animation: pulse-glow 1s infinite;
+}
+@keyframes pulse-glow { 0%,100%{opacity:1} 50%{opacity:.3} }
+.opp-name { font-size: 5.5px; color: #90ee90; text-align: center; max-width: 48px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opp-backs { display: flex; gap: 1px; }
+.opp-card-back { width: 8px; height: 12px; background: var(--blue-back); border-radius: 1px; border: 1px solid #4a6aaa; }
+.partner-tag { font-size: 5px; color: var(--gold); }
+
+/* Center — trick + trump */
+.prop-center {
+  flex: 1;
+  background: radial-gradient(ellipse at 50% 50%, var(--green-mid), var(--green-dark));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 0;
+}
+.prop-trump-bar {
+  background: rgba(0,0,0,.5);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 6.5px;
+  color: var(--gold);
+}
+.prop-trick-area {
+  display: grid;
+  grid-template-areas: ". t ." "l . r" ". b .";
+  gap: 2px;
+}
+.prop-trick-slot {
+  width: 22px; height: 32px;
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+}
+.prop-trick-slot.has { background: var(--card-face); border-color: transparent; color: #333; font-size: 8px; }
+.prop-trick-slot.red { color: #cc0000; }
+.prop-trick-slot.empty { background: transparent; }
+.prop-trick-count { font-size: 6px; color: #ccc; }
+
+/* Bidding overlay bar */
+.prop-bid-bar {
+  background: rgba(0,0,0,.85);
+  border-top: 1px solid var(--gold);
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 4px;
+}
+.prop-bid-label { font-size: 6.5px; color: var(--gold); }
+.prop-bid-btn {
+  background: var(--gold);
+  color: #000;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 6.5px;
+  font-weight: bold;
+}
+.prop-pass-btn {
+  background: transparent;
+  border: 1px solid #888;
+  color: #888;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 6.5px;
+}
+
+/* My hand */
+.prop-hand-area {
+  background: rgba(0,0,0,.4);
+  padding: 4px 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.prop-hand {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+.prop-card {
+  width: 24px; height: 38px;
+  background: var(--card-face);
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  font-weight: bold;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0,0,0,.3);
+}
+.prop-card.red { color: #cc0000; }
+.prop-card.highlight { border-color: var(--gold); box-shadow: 0 0 4px rgba(240,192,64,.6); }
+.prop-hand-label { font-size: 5.5px; color: #aaa; }
+
+/* Self video row */
+.prop-self-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 4px;
+}
+.prop-self-vid {
+  width: 28px; height: 22px;
+  background: #111;
+  border-radius: 3px;
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+}
+.prop-self-name { font-size: 5.5px; color: #90ee90; }
+.prop-media-btns { display: flex; gap: 2px; margin-left: auto; }
+.prop-media-btn { width: 14px; height: 14px; background: rgba(255,255,255,.1); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 7px; }
+
+
+/* ── Callout annotations ── */
+.annotation {
+  font-size: .72rem;
+  color: #eee;
+  background: rgba(0,0,0,.5);
+  border-left: 3px solid var(--gold);
+  padding: 4px 8px;
+  border-radius: 0 6px 6px 0;
+  max-width: 200px;
+}
+.annotation.bad  { border-left-color: #ff4444; }
+.annotation.good { border-left-color: #44ff88; }
+
+.annotations { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; max-width: 200px; }
+
+/* ── Legend ── */
+.legend {
+  margin: 32px auto 0;
+  max-width: 500px;
+  background: rgba(255,255,255,.05);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.legend h2 { color: var(--gold); font-size: 1rem; margin-bottom: 10px; }
+.legend ul { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 6px; }
+.legend li { font-size: .82rem; color: #ccc; }
+.legend li b { color: #fff; }
+</style>
+</head>
+<body>
+
+<h1>Euchre — iPhone Portrait Layout Mockup</h1>
+<p class="subtitle">Approximate wireframe only — not pixel-perfect, illustrates the layout concept</p>
+
+<div class="phones-row">
+
+  <!-- ── CURRENT ── -->
+  <div class="phone-wrap">
+    <div class="phone-label">❌ Current iPhone</div>
+
+    <div class="phone">
+      <div class="phone-screen current-screen">
+
+        <div class="cur-header">
+          <span class="room">Room: ABC123</span>
+          <span class="score">Us 2 — Them 1</span>
+        </div>
+
+        <div class="cur-table">
+
+          <!-- top -->
+          <div class="cur-top">
+            <div class="vid-box">🤖</div>
+            <div class="player-chip">South (AI)</div>
+            <div class="backs">
+              <span class="card-back-h"></span>
+              <span class="card-back-h"></span>
+              <span class="card-back-h"></span>
+              <span class="card-back-h"></span>
+              <span class="card-back-h"></span>
+            </div>
+          </div>
+
+          <!-- left -->
+          <div class="cur-left">
+            <div class="vid-box" style="width:44px;height:25px;font-size:7px;">📷</div>
+            <div class="side-label">Phone</div>
+            <div class="backs" style="flex-direction:row;flex-wrap:wrap;justify-content:center;">
+              <span class="card-back-h"></span>
+              <span class="card-back-h"></span>
+              <span class="card-back-h" style="margin-top:1px;"></span>
+              <span class="card-back-h" style="margin-top:1px;"></span>
+              <span class="card-back-h" style="margin-top:1px;"></span>
+            </div>
+          </div>
+
+          <!-- center -->
+          <div class="cur-ctr">
+            <div class="trump-badge">♠ Trump</div>
+            <div class="trick-area-mini">
+              <div style="grid-area:t" class="trick-slot-mini has-card">A♠</div>
+              <div style="grid-area:l" class="trick-slot-mini has-card">K♠</div>
+              <div style="grid-area:r" class="trick-slot-mini"></div>
+              <div style="grid-area:b" class="trick-slot-mini"></div>
+            </div>
+            <div style="font-size:5.5px;color:#aaa;">Tricks: 1–0</div>
+          </div>
+
+          <!-- right -->
+          <div class="cur-right">
+            <div class="vid-box" style="width:44px;height:25px;font-size:7px;">🤖</div>
+            <div class="side-label">West AI</div>
+            <div class="backs" style="flex-direction:row;flex-wrap:wrap;justify-content:center;">
+              <span class="card-back-h"></span>
+              <span class="card-back-h"></span>
+              <span class="card-back-h" style="margin-top:1px;"></span>
+              <span class="card-back-h" style="margin-top:1px;"></span>
+            </div>
+          </div>
+
+          <!-- bottom -->
+          <div class="cur-bot">
+            <div class="vid-box" style="border-color:#f0c040;">😊</div>
+            <div class="my-hand-mini">
+              <div class="hand-card-mini red">A<br>♥</div>
+              <div class="hand-card-mini">J<br>♠</div>
+              <div class="hand-card-mini red">Q<br>♦</div>
+              <div class="hand-card-mini">K<br>♣</div>
+              <div class="hand-card-mini">9<br>♠</div>
+            </div>
+            <div class="bid-mini" style="font-size:4.5px;">
+              <div>Order up?</div>
+              <div class="bid-btn-mini">Order Up</div>
+              <div style="color:#888;margin-top:1px;font-size:4px;">Pass</div>
+            </div>
+          </div>
+
+        </div><!-- cur-table -->
+      </div><!-- phone-screen -->
+    </div><!-- phone -->
+
+    <div class="annotations">
+      <div class="annotation bad">Cards only 16px wide — hard to tap accurately</div>
+      <div class="annotation bad">Side columns 52px — video barely visible</div>
+      <div class="annotation bad">Everything competes for space at once</div>
+      <div class="annotation bad">Bidding controls crammed into corner</div>
+    </div>
+  </div><!-- phone-wrap current -->
+
+
+  <!-- ── PROPOSED ── -->
+  <div class="phone-wrap">
+    <div class="phone-label">✅ Proposed iPhone</div>
+
+    <div class="phone">
+      <div class="phone-screen proposed-screen">
+
+        <!-- Header bar: score + trump + room -->
+        <div class="prop-header">
+          <span class="room">ABC123</span>
+          <span class="score">Us 2 — Them 1</span>
+          <span class="trump">♠ Trump</span>
+        </div>
+
+        <!-- Opponents strip: all 3 in one row -->
+        <div class="prop-opponents">
+          <div class="opp-chip">
+            <div class="opp-avatar">🤖</div>
+            <div class="opp-name">West AI</div>
+            <div class="opp-backs">
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+            </div>
+          </div>
+          <div class="opp-chip">
+            <div class="opp-avatar is-turn">🤖<div class="turn-glow"></div></div>
+            <div class="opp-name" style="color:var(--gold);">South AI ★</div>
+            <div class="opp-backs">
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+            </div>
+            <div class="partner-tag">partner</div>
+          </div>
+          <div class="opp-chip">
+            <div class="opp-avatar">📷</div>
+            <div class="opp-name">Phone</div>
+            <div class="opp-backs">
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+              <div class="opp-card-back"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trick area + trump -->
+        <div class="prop-center">
+          <div class="prop-trump-bar">♠ Spades is trump · Maker: South AI</div>
+          <div class="prop-trick-area">
+            <div class="prop-trick-slot has" style="grid-area:t">A♠</div>
+            <div class="prop-trick-slot has red" style="grid-area:l">K♦</div>
+            <div class="prop-trick-slot empty" style="grid-area:r"></div>
+            <div class="prop-trick-slot empty" style="grid-area:b"></div>
+          </div>
+          <div class="prop-trick-count">Tricks: Us 1 – Them 0</div>
+        </div>
+
+        <!-- Bidding bar (shown when it's your turn) -->
+        <div class="prop-bid-bar">
+          <div class="prop-bid-label">Order up ♠?</div>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <div style="font-size:6px;color:#aaa;display:flex;align-items:center;gap:2px;"><input type="checkbox" style="width:7px;height:7px;"> Alone</div>
+            <div class="prop-bid-btn">Order Up</div>
+            <div class="prop-pass-btn">Pass</div>
+          </div>
+        </div>
+
+        <!-- My hand -->
+        <div class="prop-hand-area">
+          <div class="prop-self-row">
+            <div class="prop-self-vid">😊</div>
+            <div class="prop-self-name">Steve (you)</div>
+            <div class="prop-media-btns">
+              <div class="prop-media-btn">🎤</div>
+              <div class="prop-media-btn">📷</div>
+            </div>
+          </div>
+          <div class="prop-hand">
+            <div class="prop-card red highlight">A<br>♥</div>
+            <div class="prop-card">J<br>♠</div>
+            <div class="prop-card red">Q<br>♦</div>
+            <div class="prop-card">K<br>♣</div>
+            <div class="prop-card">9<br>♠</div>
+          </div>
+          <div class="prop-hand-label">Tap a card to play · Tap 🤖 above to see their video</div>
+        </div>
+
+      </div><!-- phone-screen -->
+    </div><!-- phone -->
+
+    <div class="annotations">
+      <div class="annotation good">Cards 24px wide — much easier to tap</div>
+      <div class="annotation good">All 3 opponents in compact strip — tap avatar to expand video</div>
+      <div class="annotation good">Bidding bar spans full width — easy to see &amp; tap</div>
+      <div class="annotation good">Score + trump always visible in header</div>
+      <div class="annotation good">Self-video compact, doesn't steal space</div>
+    </div>
+  </div><!-- phone-wrap proposed -->
+
+</div><!-- phones-row -->
+
+
+<div class="legend">
+  <h2>Key differences</h2>
+  <ul>
+    <li><b>Opponents strip</b> — all 3 opponents in a single horizontal row at the top. Small avatar (tap to expand video). Card count shown as mini backs. Current turn highlighted in gold.</li>
+    <li><b>Full-width trick area</b> — center gets more vertical space since the side columns are gone.</li>
+    <li><b>Full-width bidding bar</b> — Order Up / Pass spans the whole screen width, easy to tap without mis-tapping.</li>
+    <li><b>Larger hand cards</b> — 24px wide vs 16px currently. Still fits 5 cards comfortably.</li>
+    <li><b>Self-video compact</b> — small row above your hand. Camera/mute buttons inline. No wasted space.</li>
+    <li><b>Score + trump in header</b> — always visible, never hidden behind other content.</li>
+  </ul>
+</div>
+
+</body>
+</html>
