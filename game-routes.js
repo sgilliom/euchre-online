@@ -9,7 +9,7 @@ let anthropic;
 function init(database) {
   db = database;
   if (process.env.ANTHROPIC_API_KEY) {
-    anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 8000 });
   }
 }
 
@@ -22,13 +22,14 @@ function shuffle(array) {
   return arr;
 }
 
+function staticFeedback(question, selectedChoice, isCorrect) {
+  return isCorrect
+    ? question.explanation.correct
+    : (question.explanation.wrong?.[selectedChoice] || question.explanation.correct);
+}
+
 async function getAiFeedback(question, selectedChoice, isCorrect) {
-  if (!anthropic) {
-    // Fallback to static explanation when no API key configured
-    return isCorrect
-      ? question.explanation.correct
-      : (question.explanation.wrong[selectedChoice] || question.explanation.correct);
-  }
+  if (!anthropic) return staticFeedback(question, selectedChoice, isCorrect);
 
   const selectedText = question.choices.find(c => c.id === selectedChoice)?.text || selectedChoice;
   const correctText  = question.choices.find(c => c.id === question.correct)?.text || question.correct;
@@ -48,14 +49,18 @@ Correct answer: "${correctText}"
 
 Write 2–3 sentences that: (1) explain the key flaw in their choice, (2) explain what makes the correct answer superior for this specific context. Be constructive, specific, and educational — not discouraging.`;
 
-  const message = await anthropic.messages.create({
-    model: 'claude-opus-4-6',
+  const aiCall = anthropic.messages.create({
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 350,
-    thinking: { type: 'adaptive' },
     messages: [{ role: 'user', content: prompt }]
   });
 
-  return message.content.find(b => b.type === 'text')?.text?.trim() || question.explanation.correct;
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('AI feedback timeout')), 6000)
+  );
+
+  const message = await Promise.race([aiCall, timeoutPromise]);
+  return message.content.find(b => b.type === 'text')?.text?.trim() || staticFeedback(question, selectedChoice, isCorrect);
 }
 
 // ── POST /api/game/start ──────────────────────────────────────────
