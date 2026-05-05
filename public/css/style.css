@@ -318,7 +318,7 @@ button { touch-action: manipulation; }
 
 .zone-top  .player-video-wrap { width: min(190px, 14vw); height: min(143px, 17vh); }
 .zone-left .player-video-wrap,
-.zone-right .player-video-wrap { width: min(175px, 13vw); height: min(131px, 16vh); }
+.zone-right .player-video-wrap { width: min(175px, 13vw); height: min(175px, 22vh); }
 .local-video-wrap { width: min(165px, 12vw); height: min(125px, 14vh); border-color: var(--gold) !important; }
 
 video { width: 100%; height: 100%; object-fit: cover; display: block; }

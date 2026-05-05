@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const d = new Date(buildTime);
     const mo = d.getMonth() + 1, dy = d.getDate();
     const hr = d.getHours(), mn = String(d.getMinutes()).padStart(2, '0');
-    vb.textContent = `Build ${mo}/${dy} ${hr}:${mn}`;
+    vb.textContent = `Build ${mo}/${dy} ${hr}:${mn} P`;
   }).catch(() => {});
 
   el('join-form').addEventListener('submit', handleJoin);
