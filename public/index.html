@@ -90,15 +90,18 @@
       <span id="room-badge"></span>
     </div>
     <div class="header-scores">
-      <div class="score-block team0">
-        <div id="team0-names" class="team-names">Team 1</div>
-        <div id="score-0" class="score-val">0</div>
+      <div class="header-scores-row">
+        <div class="score-block team0">
+          <div id="team0-names" class="team-names">Team 1</div>
+          <div id="score-0" class="score-val">0</div>
+        </div>
+        <div class="score-divider">vs</div>
+        <div class="score-block team1">
+          <div id="team1-names" class="team-names">Team 2</div>
+          <div id="score-1" class="score-val">0</div>
+        </div>
       </div>
-      <div class="score-divider">vs</div>
-      <div class="score-block team1">
-        <div id="team1-names" class="team-names">Team 2</div>
-        <div id="score-1" class="score-val">0</div>
-      </div>
+      <div id="hand-tricks" class="hand-tricks"></div>
     </div>
     <div class="header-right">
       <div id="trump-display" class="trump-display"></div>
@@ -151,7 +154,6 @@
         <div id="trick-bottom" class="trick-slot"></div>
       </div>
       <div id="last-trick-msg" class="last-trick-msg"></div>
-      <div id="hand-tricks" class="hand-tricks"></div>
     </div>
 
     <!-- Right player -->
@@ -185,7 +187,6 @@
       </div>
       <div class="bottom-right">
         <div class="bottom-right-top">
-          <div id="trick-counter" class="trick-counter"></div>
           <div id="auto-play-wrap"></div>
           <button class="btn btn-secondary chat-toggle-btn" onclick="toggleChat()" id="chat-toggle">💬</button>
         </div>

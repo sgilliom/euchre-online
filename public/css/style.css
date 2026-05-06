@@ -152,11 +152,12 @@ button { touch-action: manipulation; }
 
 /* Hand trick score strip in center zone */
 .hand-tricks { display: flex; align-items: center; justify-content: center;
-  gap: 6px; font-size: .9rem; letter-spacing: .04em; margin-top: 2px; }
-.ht-team { font-size: .75rem; letter-spacing: .06em; }
+  gap: 5px; font-size: .78rem; letter-spacing: .04em;
+  width: 100%; margin-top: 3px; }
+.ht-team { font-size: .68rem; letter-spacing: .06em; }
 .ht-t0   { color: #64b5f6; }
 .ht-t1   { color: #ef9a9a; }
-.ht-sep  { font-size: 1.1rem; font-weight: 700; color: #fff; min-width: 28px; text-align: center; }
+.ht-sep  { font-size: .85rem; font-weight: 700; color: #fff; min-width: 24px; text-align: center; }
 
 /* Dealer / maker / status badges on player name labels */
 .badge { display: inline-block; border-radius: 10px; padding: 1px 7px;
@@ -235,7 +236,8 @@ button { touch-action: manipulation; }
 .header-left { min-width: 90px; }
 #room-badge { font-size: .82rem; color: #aaa; letter-spacing: .08em; }
 
-.header-scores { display: flex; align-items: center; gap: 1rem; }
+.header-scores { display: flex; flex-direction: column; align-items: center; gap: .2rem; }
+.header-scores-row { display: flex; align-items: center; gap: 1rem; }
 .score-block { text-align: center; }
 .team-names  { font-size: .92rem; color: #aaa; white-space: nowrap; }
 .score-val   { font-size: 2.1rem; font-weight: 700; line-height: 1; }
