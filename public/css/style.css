@@ -279,6 +279,8 @@ button { touch-action: manipulation; }
   justify-content: flex-start; gap: 4px; min-width: 0; min-height: 0; }
 
 .zone-top    { grid-area: top;    flex-direction: row; align-items: flex-start; justify-content: center; gap: 12px; }
+/* Fixed width reserves space for 5 card-backs so the video doesn't drift as cards are played */
+#cards-top { min-width: 242px; } /* 5 × 46px + 4 × 3px gap */
 /* min-height:0 prevents flex containers from forcing the 1fr row to expand beyond available space */
 /* justify-content: flex-start anchors the video at the TOP of each side zone.
    With overflow:hidden, center/start avoids the video being clipped off the top
@@ -596,6 +598,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card.hand-card  { width: 70px; height: 103px; }
   .card.trick-card { width: 50px; height: 73px; }
   .card-back       { width: 36px; height: 52px; }
+  #cards-top { min-width: 192px; } /* 5 × 36px + 4 × 3px */
 
   .bottom-right { width: 180px; }
 }
@@ -764,6 +767,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card.trick-card { width: 98px;  height: 143px; font-size: 1.45rem; }
   .card-back       { width: 60px; height: 88px; }
   .card-backs.vertical .card-back { width: 88px; height: 60px; }
+  #cards-top { min-width: 312px; } /* 5 × 60px + 4 × 3px */
   .trick-slot { width: 98px; height: 158px; }
   .my-hand { gap: 11px; min-height: 130px; }
   .player-label { font-size: 1.15rem; max-width: 280px; }
@@ -789,6 +793,7 @@ video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card.trick-card { width: 114px; height: 166px; font-size: 1.7rem; }
   .card-back       { width: 70px;  height: 102px; }
   .card-backs.vertical .card-back { width: 102px; height: 70px; }
+  #cards-top { min-width: 362px; } /* 5 × 70px + 4 × 3px */
   .trick-slot { width: 114px; height: 180px; }
   .my-hand { gap: 13px; min-height: 145px; }
   .player-label { font-size: 1.28rem; }
