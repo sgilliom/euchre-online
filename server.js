@@ -99,6 +99,7 @@ const SUITS = ['S', 'H', 'D', 'C'];
 const RANKS = ['9', '10', 'J', 'Q', 'K', 'A'];
 const SAME_COLOR = { S: 'C', C: 'S', H: 'D', D: 'H' };
 const RANK_VAL = { '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
+const SUIT_NAMES = { S: '♠ Spades', H: '♥ Hearts', D: '♦ Diamonds', C: '♣ Clubs' };
 
 // ============================================================
 // Card utilities
@@ -255,7 +256,10 @@ function botBidRound1(room, botPlayer) {
     if (dealer) g.hands[dealer.id].push(g.upcard);
     g.phase = 'dealer_discard';
     g.currentTurn = g.dealer;
+    const dealerName = dealer ? dealer.name : 'dealer';
+    io.to(room.id).emit('system_msg', { text: `${botPlayer.name} ordered it up to ${dealerName}.` });
   } else {
+    io.to(room.id).emit('system_msg', { text: `${botPlayer.name} passed.` });
     advanceBid(room);
   }
   broadcast(room);
@@ -286,7 +290,9 @@ function botBidRound2(room, botPlayer) {
     g.goingAlone = false;
     g.alonePlayer = null;
     setTrumpAndPlay(room);
+    io.to(room.id).emit('system_msg', { text: `${botPlayer.name} named ${SUIT_NAMES[bestSuit]} as trump.` });
   } else {
+    io.to(room.id).emit('system_msg', { text: `${botPlayer.name} passed.` });
     advanceBid(room);
   }
   broadcast(room);
@@ -752,6 +758,13 @@ io.on('connection', socket => {
 
     g.phase = 'dealer_discard';
     g.currentTurn = g.dealer;
+
+    if (player.seat === g.dealer) {
+      io.to(room.id).emit('system_msg', { text: `${player.name} picked it up!${goAlone ? ' Going alone!' : ''}` });
+    } else {
+      const dealerName = dealer ? dealer.name : 'dealer';
+      io.to(room.id).emit('system_msg', { text: `${player.name} ordered it up to ${dealerName}.${goAlone ? ' Going alone!' : ''}` });
+    }
     broadcast(room);
     triggerBotAction(room);
   });
@@ -767,6 +780,7 @@ io.on('connection', socket => {
       socket.emit('error', { message: 'Stick the dealer! You must call a suit.' });
       return;
     }
+    io.to(room.id).emit('system_msg', { text: `${player.name} passed.` });
     advanceBid(room);
     broadcast(room);
     triggerBotAction(room);
@@ -789,6 +803,7 @@ io.on('connection', socket => {
     g.goingAlone = !!goAlone;
     g.alonePlayer = goAlone ? player.seat : null;
     setTrumpAndPlay(room);
+    io.to(room.id).emit('system_msg', { text: `${player.name} named ${SUIT_NAMES[suit]} as trump.${goAlone ? ' Going alone!' : ''}` });
     broadcast(room);
     triggerBotAction(room);
   });

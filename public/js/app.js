@@ -1222,12 +1222,22 @@ function appendChat(name, message) {
 
 function appendSystemMsg(text) {
   const msgs = el('chat-messages');
-  if (!msgs) return;
-  const div = document.createElement('div');
-  div.className = 'chat-system';
-  div.textContent = text;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  if (msgs) {
+    const div = document.createElement('div');
+    div.className = 'chat-system';
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  const log = el('game-log');
+  if (log) {
+    const entry = document.createElement('div');
+    entry.className = 'game-log-entry';
+    entry.textContent = text;
+    log.prepend(entry);
+    // Keep only last 4 entries
+    while (log.children.length > 4) log.removeChild(log.lastChild);
+  }
 }
 
 // ============================================================
