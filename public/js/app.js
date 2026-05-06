@@ -1022,8 +1022,18 @@ function renderActions(s) {
 
 }
 
-// --- Trick counter (removed — dots now live in the header score bar) ---
-function renderTrickCounter(s) {}
+// --- Trick counter ---
+function renderTrickCounter(s) {
+  const el2 = el('trick-counter');
+  if (!el2) return;
+  if (s.phase !== 'playing' && s.phase !== 'hand_result') { el2.innerHTML = ''; return; }
+  const myTeam = mySeat % 2;
+  const theirTeam = 1 - myTeam;
+  el2.innerHTML = `
+    <div class="tc-row"><span class="tc-us">Our tricks:</span>  <strong>${s.trickCount[myTeam]}</strong></div>
+    <div class="tc-row"><span class="tc-them">Their tricks:</span> <strong>${s.trickCount[theirTeam]}</strong></div>
+    ${s.maker != null ? `<div style="font-size:.72rem;color:#aaa;margin-top:2px">Maker: ${pname(s,s.maker)}</div>` : ''}`;
+}
 
 // --- Turn highlight ---
 function highlightTurn(s) {
